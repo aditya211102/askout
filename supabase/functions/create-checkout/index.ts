@@ -42,19 +42,16 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // Create Dodo Payments checkout session
-    const response = await fetch("https://api.dodopayments.com/payments", {
+    // Create Dodo Payments checkout session via Checkout Sessions API
+    const response = await fetch("https://live.dodopayments.com/checkouts", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        billing: { city: "", country: "US", state: "", street: "", zipcode: "" },
-        customer: { email: "customer@crushcards.app", name: "CrushCards User" },
-        payment_link: true,
         product_cart: [{ product_id: productId, quantity: 1 }],
-        return_url: redirectUrl || undefined,
+        success_url: redirectUrl || undefined,
         metadata: { card_id: cardId },
       }),
     });
@@ -70,7 +67,7 @@ Deno.serve(async (req: Request) => {
 
     const data = await response.json();
 
-    return new Response(JSON.stringify({ payment_link: data.payment_link }), {
+    return new Response(JSON.stringify({ payment_link: data.checkout_url || data.payment_link }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
