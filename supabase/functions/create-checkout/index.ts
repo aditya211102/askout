@@ -12,7 +12,7 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { cardId, plan } = await req.json();
+    const { cardId, plan, redirectUrl } = await req.json();
 
     if (!cardId || !plan) {
       return new Response(JSON.stringify({ error: "cardId and plan required" }), {
@@ -54,6 +54,7 @@ Deno.serve(async (req: Request) => {
         customer: { email: "customer@crushcards.app", name: "CrushCards User" },
         payment_link: true,
         product_cart: [{ product_id: productId, quantity: 1 }],
+        return_url: redirectUrl || undefined,
         metadata: { card_id: cardId },
       }),
     });

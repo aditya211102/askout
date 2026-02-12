@@ -1,23 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 import type { CrushCard } from '@/lib/card-types';
 
-// Placeholder Dodo checkout links — user will replace these later
-const DODO_LINKS: Record<string, string> = {
-  basic: 'https://checkout.dodopayments.com/buy/pdt_0NYMC9vsP1ltfLoco7LtW?quantity=1',
-  premium: 'https://checkout.dodopayments.com/buy/PREMIUM_PRODUCT_ID?quantity=1',
-};
-
 const Checkout = () => {
   const navigate = useNavigate();
-  const [stage, setStage] = useState<'saving' | 'waiting' | 'done'>('saving');
-  const [cardId, setCardId] = useState<string | null>(null);
-  const [shareLink, setShareLink] = useState('');
-  const [copied, setCopied] = useState(false);
 
-  // On mount: save card to DB then redirect to Dodo
   useEffect(() => {
     let cancelled = false;
     const run = async () => {
@@ -48,14 +37,21 @@ const Checkout = () => {
         return;
       }
 
-      setCardId(data.id);
       localStorage.removeItem('pendingCard');
       localStorage.removeItem('pendingPlan');
 
-      // Redirect to Dodo checkout with metadata
-      const dodoPlan = plan as keyof typeof DODO_LINKS;
-      const checkoutUrl = `${DODO_LINKS[dodoPlan]}&metadata[card_id]=${data.id}`;
-      window.location.href = checkoutUrl;
+      // Call edge function to create checkout with redirect_url
+      const redirectUrl = `${window.location.origin}/success?card_id=${data.id}`;
+      const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke('create-checkout', {
+        body: { cardId: data.id, plan, redirectUrl },
+      });
+
+      if (checkoutError || !checkoutData?.payment_link) {
+        console.error('Failed to create checkout', checkoutError);
+        return;
+      }
+
+      window.location.href = checkoutData.payment_link;
     };
 
     run();
