@@ -8,7 +8,7 @@ import type { CrushCard } from '@/lib/card-types';
 
 // Placeholder Dodo checkout links — user will replace these later
 const DODO_LINKS: Record<string, string> = {
-  basic: 'https://checkout.dodopayments.com/buy/BASIC_PRODUCT_ID?quantity=1',
+  basic: 'https://checkout.dodopayments.com/buy/pdt_0NYMC9vsP1ltfLoco7LtW?quantity=1',
   premium: 'https://checkout.dodopayments.com/buy/PREMIUM_PRODUCT_ID?quantity=1',
 };
 
