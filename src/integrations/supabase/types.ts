@@ -20,11 +20,13 @@ export type Database = {
           id: string
           no_button_trick: string
           paid: boolean
+          plan: string
           question: string
           recipient_name: string | null
           sender_name: string | null
           stickers: Json
           theme: string
+          user_id: string | null
           yes_message: string
         }
         Insert: {
@@ -32,11 +34,13 @@ export type Database = {
           id?: string
           no_button_trick?: string
           paid?: boolean
+          plan?: string
           question?: string
           recipient_name?: string | null
           sender_name?: string | null
           stickers?: Json
           theme?: string
+          user_id?: string | null
           yes_message?: string
         }
         Update: {
@@ -44,11 +48,13 @@ export type Database = {
           id?: string
           no_button_trick?: string
           paid?: boolean
+          plan?: string
           question?: string
           recipient_name?: string | null
           sender_name?: string | null
           stickers?: Json
           theme?: string
+          user_id?: string | null
           yes_message?: string
         }
         Relationships: []
