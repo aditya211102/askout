@@ -32,15 +32,15 @@ export interface CrushCard {
   paid?: boolean;
 }
 
-export const THEMES: Record<CardTheme, { name: string; emoji: string; description: string; bg: string; accent: string; text: string }> = {
+export const THEMES: Record<CardTheme, { name: string; emoji: string; description: string; bg: string; accent: string; text: string; premium?: boolean }> = {
   classic: { name: 'Classic Romance', emoji: '❤️', description: 'Red & pink hearts', bg: 'bg-gradient-to-br from-rose-100 to-pink-200', accent: 'text-rose-600', text: 'text-rose-900' },
   kawaii: { name: 'Cute & Kawaii', emoji: '🌸', description: 'Pastel cartoon style', bg: 'bg-gradient-to-br from-pink-100 to-purple-100', accent: 'text-pink-500', text: 'text-purple-800' },
-  elegant: { name: 'Elegant Gold', emoji: '✨', description: 'Luxury gold accents', bg: 'bg-gradient-to-br from-amber-50 to-yellow-100', accent: 'text-amber-600', text: 'text-amber-900' },
+  elegant: { name: 'Elegant Gold', emoji: '✨', description: 'Luxury gold accents', bg: 'bg-gradient-to-br from-amber-50 to-yellow-100', accent: 'text-amber-600', text: 'text-amber-900', premium: true },
   meme: { name: 'Funny/Meme', emoji: '😂', description: 'Playful & bold', bg: 'bg-gradient-to-br from-yellow-200 to-orange-200', accent: 'text-orange-600', text: 'text-orange-900' },
-  darkmode: { name: 'Dark Mode Love', emoji: '🖤', description: 'Moody neon accents', bg: 'bg-gradient-to-br from-gray-900 to-purple-950', accent: 'text-pink-400', text: 'text-white' },
+  darkmode: { name: 'Dark Mode Love', emoji: '🖤', description: 'Moody neon accents', bg: 'bg-gradient-to-br from-gray-900 to-purple-950', accent: 'text-pink-400', text: 'text-white', premium: true },
   retro: { name: 'Retro Valentine', emoji: '💌', description: 'Vintage vibes', bg: 'bg-gradient-to-br from-red-100 to-orange-100', accent: 'text-red-700', text: 'text-red-900' },
   minimalist: { name: 'Minimalist', emoji: '🤍', description: 'Clean & modern', bg: 'bg-gradient-to-br from-gray-50 to-gray-100', accent: 'text-gray-700', text: 'text-gray-900' },
-  galaxy: { name: 'Galaxy Love', emoji: '🌌', description: 'Cosmic & starry', bg: 'bg-gradient-to-br from-indigo-950 to-purple-900', accent: 'text-cyan-400', text: 'text-white' },
+  galaxy: { name: 'Galaxy Love', emoji: '🌌', description: 'Cosmic & starry', bg: 'bg-gradient-to-br from-indigo-950 to-purple-900', accent: 'text-cyan-400', text: 'text-white', premium: true },
 };
 
 export const TRICKS: Record<NoButtonTrick, { name: string; emoji: string; description: string }> = {
