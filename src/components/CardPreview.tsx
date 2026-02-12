@@ -50,19 +50,29 @@ const CardPreview = ({ card, interactive = false, onAccept }: CardPreviewProps) 
 
   return (
     <div className={`relative rounded-2xl p-8 shadow-2xl overflow-hidden min-h-[350px] flex flex-col items-center justify-center ${theme.bg}`}>
-      {/* Stickers */}
-      {card.stickers.map((s, i) => (
-        <motion.div
-          key={i}
-          className="absolute text-2xl pointer-events-none"
-          style={{ left: `${s.x}%`, top: `${s.y}%` }}
-          initial={{ scale: 0, rotate: s.rotation }}
-          animate={{ scale: s.scale, rotate: s.rotation }}
-          transition={{ type: 'spring', delay: i * 0.05 }}
-        >
-          {STICKERS[s.type].emoji}
-        </motion.div>
-      ))}
+      {/* Stickers — positioned around the edges to avoid overlapping text */}
+      {card.stickers.map((s, i) => {
+        const stickerData = STICKERS[s.type];
+        // Push stickers to edges: x constrained to 0-15% or 75-95%, y to 0-15% or 75-95%
+        const edgeX = s.x < 50 ? Math.min(s.x, 15) : Math.max(s.x, 75);
+        const edgeY = s.y < 50 ? Math.min(s.y, 15) : Math.max(s.y, 75);
+        return (
+          <motion.div
+            key={i}
+            className="absolute pointer-events-none z-0"
+            style={{ left: `${edgeX}%`, top: `${edgeY}%` }}
+            initial={{ scale: 0, rotate: s.rotation }}
+            animate={{ scale: s.scale, rotate: s.rotation }}
+            transition={{ type: 'spring', delay: i * 0.05 }}
+          >
+            {stickerData.image ? (
+              <img src={stickerData.image} alt={stickerData.name} className="w-10 h-10 object-contain" />
+            ) : (
+              <span className="text-2xl">{stickerData.emoji}</span>
+            )}
+          </motion.div>
+        );
+      })}
 
       <AnimatePresence mode="wait">
         {!accepted ? (
