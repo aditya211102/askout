@@ -1,30 +1,11 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { Webhook } from "https://esm.sh/standardwebhooks@1.0.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "authorization, x-client-info, apikey, content-type, webhook-id, webhook-signature, webhook-timestamp",
 };
-
-async function verifySignature(
-  payload: string,
-  signatureHeader: string,
-  secret: string
-): Promise<boolean> {
-  const encoder = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    "raw",
-    encoder.encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"]
-  );
-  const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(payload));
-  const computed = Array.from(new Uint8Array(signature))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-  return computed === signatureHeader;
-}
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -33,21 +14,35 @@ Deno.serve(async (req: Request) => {
 
   try {
     const body = await req.text();
-    const signature = req.headers.get("webhook-signature") || req.headers.get("x-dodo-signature") || "";
     const webhookSecret = Deno.env.get("DODO_PAYMENTS_WEBHOOK_SECRET");
 
-    if (webhookSecret && signature) {
-      const valid = await verifySignature(body, signature, webhookSecret);
-      if (!valid) {
-        console.error("Invalid webhook signature");
-        return new Response(JSON.stringify({ error: "Invalid signature" }), {
-          status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
+    if (!webhookSecret) {
+      console.error("DODO_PAYMENTS_WEBHOOK_SECRET not set");
+      return new Response(JSON.stringify({ error: "Webhook not configured" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    const event = JSON.parse(body);
+    // Verify signature using standardwebhooks
+    const wh = new Webhook(webhookSecret);
+    const headers = {
+      "webhook-id": req.headers.get("webhook-id") || "",
+      "webhook-signature": req.headers.get("webhook-signature") || "",
+      "webhook-timestamp": req.headers.get("webhook-timestamp") || "",
+    };
+
+    let event: any;
+    try {
+      event = wh.verify(body, headers);
+    } catch (err) {
+      console.error("Invalid webhook signature:", err);
+      return new Response(JSON.stringify({ error: "Invalid signature" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     console.log("Dodo webhook event:", event.event_type || event.type);
 
     const eventType = event.event_type || event.type || "";
