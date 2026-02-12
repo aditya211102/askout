@@ -66,10 +66,13 @@ Deno.serve(async (req: Request) => {
           Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
         );
 
-        const { error } = await supabase
+        // Mark card as paid
+        const { data: cardData, error } = await supabase
           .from("cards")
           .update({ paid: true })
-          .eq("id", cardId);
+          .eq("id", cardId)
+          .select("user_id, plan")
+          .single();
 
         if (error) {
           console.error("Failed to mark card as paid:", error);
@@ -77,6 +80,20 @@ Deno.serve(async (req: Request) => {
             status: 500,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
+        }
+
+        // Update user's profile plan
+        if (cardData?.user_id) {
+          const { error: profileError } = await supabase
+            .from("profiles")
+            .update({ plan: cardData.plan })
+            .eq("user_id", cardData.user_id);
+
+          if (profileError) {
+            console.error("Failed to update profile plan:", profileError);
+          } else {
+            console.log(`Profile for user ${cardData.user_id} updated to plan: ${cardData.plan}`);
+          }
         }
 
         console.log(`Card ${cardId} marked as paid`);
