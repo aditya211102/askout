@@ -28,6 +28,7 @@ export interface CrushCard {
   noButtonTrick: NoButtonTrick;
   stickers: StickerPlacement[];
   recipientName?: string;
+  senderName?: string;
   paid?: boolean;
 }
 

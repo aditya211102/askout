@@ -33,6 +33,7 @@ const Checkout = () => {
       no_button_trick: card.noButtonTrick,
       stickers: card.stickers as any,
       recipient_name: card.recipientName || null,
+      sender_name: card.senderName || null,
       paid: true,
     }).select('id').single();
 
@@ -73,6 +74,7 @@ const Checkout = () => {
               <div className="flex justify-between"><span className="text-muted-foreground">Trick</span><span className="font-medium capitalize">{card.noButtonTrick}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Stickers</span><span className="font-medium">{card.stickers.length}</span></div>
               {card.recipientName && <div className="flex justify-between"><span className="text-muted-foreground">To</span><span className="font-medium">{card.recipientName}</span></div>}
+              {card.senderName && <div className="flex justify-between"><span className="text-muted-foreground">From</span><span className="font-medium">{card.senderName}</span></div>}
             </div>
             <div className="border-t border-border pt-4">
               <div className="flex justify-between text-lg font-bold mb-4">

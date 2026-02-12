@@ -22,6 +22,7 @@ export type Database = {
           paid: boolean
           question: string
           recipient_name: string | null
+          sender_name: string | null
           stickers: Json
           theme: string
           yes_message: string
@@ -33,6 +34,7 @@ export type Database = {
           paid?: boolean
           question?: string
           recipient_name?: string | null
+          sender_name?: string | null
           stickers?: Json
           theme?: string
           yes_message?: string
@@ -44,6 +46,7 @@ export type Database = {
           paid?: boolean
           question?: string
           recipient_name?: string | null
+          sender_name?: string | null
           stickers?: Json
           theme?: string
           yes_message?: string
