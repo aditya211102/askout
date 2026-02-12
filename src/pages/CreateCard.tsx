@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Heart, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Heart, ChevronDown, Sparkles, Type, Wand2, Palette, Eye } from 'lucide-react';
 import {
   type CrushCard,
   type CardTheme,
@@ -16,266 +16,334 @@ import {
 } from '@/lib/card-types';
 import CardPreview from '@/components/CardPreview';
 
-const STEPS = ['Theme', 'Message', 'Trick', 'Stickers', 'Preview', 'Details'];
+type SectionId = 'names' | 'trick' | 'stickers' | 'theme';
 
 const CreateCard = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState(0);
+  const [openSections, setOpenSections] = useState<Set<SectionId>>(new Set(['names']));
+  const [showPreview, setShowPreview] = useState(false);
   const [card, setCard] = useState<CrushCard>({
     theme: 'classic',
     question: 'Will you be my Valentine?',
-    yesMessage: 'You just made my day! 💕',
+    yesMessage: 'I promise to buy you snacks and send you cute cat memes!',
     noButtonTrick: 'runaway',
     stickers: [],
   });
 
   const updateCard = (updates: Partial<CrushCard>) => setCard((prev) => ({ ...prev, ...updates }));
 
-  const canProceed = () => {
-    if (step === 1) return card.question.trim().length > 0 && card.yesMessage.trim().length > 0;
-    if (step === 5) return (card.recipientName?.trim().length ?? 0) > 0 && (card.senderName?.trim().length ?? 0) > 0;
-    return true;
+  const toggleSection = (id: SectionId) => {
+    setOpenSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   };
 
-  const handleCheckout = () => {
+  const canPreview = card.question.trim().length > 0 && card.yesMessage.trim().length > 0;
+
+  const handleSaveAndShare = () => {
     sessionStorage.setItem('pendingCard', JSON.stringify(card));
     navigate('/checkout');
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-pink-50 to-rose-100">
       {/* Header */}
-      <header className="py-4 px-6 border-b border-border">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <button onClick={() => navigate('/')} className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Back
+      <header className="py-3 px-6 border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-20">
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
+          <button onClick={() => navigate('/')} className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
+            <Heart className="w-5 h-5 text-primary fill-primary" />
+            <span className="font-display text-lg font-bold">Valentine Maker</span>
           </button>
-          <div className="flex items-center gap-2">
-            <Heart className="w-6 h-6 text-primary fill-primary" />
-            <span className="font-display text-xl font-bold text-gradient-crush">CrushCards</span>
-          </div>
-          <div className="w-16" />
         </div>
       </header>
 
-      {/* Steps indicator */}
-      <div className="max-w-4xl mx-auto px-6 pt-8">
-        <div className="flex items-center justify-between mb-8">
-          {STEPS.map((s, i) => (
-            <div key={s} className="flex items-center">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
-                  i <= step ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                }`}
-              >
-                {i + 1}
-              </div>
-              <span className={`ml-2 text-sm font-medium hidden sm:inline ${i <= step ? 'text-foreground' : 'text-muted-foreground'}`}>
-                {s}
-              </span>
-              {i < STEPS.length - 1 && (
-                <div className={`w-4 sm:w-10 h-0.5 mx-2 ${i < step ? 'bg-primary' : 'bg-muted'}`} />
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="max-w-3xl mx-auto px-6 pb-24">
-        <AnimatePresence mode="wait">
-          {step === 0 && (
-            <motion.div key="theme" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-              <h2 className="font-display text-3xl font-bold mb-2">Choose a Theme 🎨</h2>
-              <p className="text-muted-foreground mb-6">Pick the vibe for your card</p>
-              <div className="grid grid-cols-2 gap-4">
-                {(Object.entries(THEMES) as [CardTheme, typeof THEMES[CardTheme]][]).map(([key, theme]) => (
-                  <motion.button
-                    key={key}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    onClick={() => updateCard({ theme: key })}
-                    className={`p-4 rounded-xl text-left transition-all border-2 ${
-                      card.theme === key ? 'border-primary shadow-lg ring-2 ring-primary/20' : 'border-border hover:border-primary/30'
-                    }`}
-                  >
-                    <div className={`w-full h-20 rounded-lg mb-3 ${theme.bg}`} />
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">{theme.emoji}</span>
-                      <div>
-                        <div className="font-bold text-sm">{theme.name}</div>
-                        <div className="text-xs text-muted-foreground">{theme.description}</div>
-                      </div>
-                    </div>
-                  </motion.button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {step === 1 && (
-            <motion.div key="message" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-              <h2 className="font-display text-3xl font-bold mb-2">Write Your Message ✍️</h2>
-              <p className="text-muted-foreground mb-6">What do you want to ask?</p>
-              <div className="space-y-6">
-                <div>
-                  <label className="text-sm font-bold mb-2 block">The Big Question</label>
-                  <Input
-                    value={card.question}
-                    onChange={(e) => updateCard({ question: e.target.value })}
-                    placeholder="Will you be my Valentine?"
-                    className="text-lg"
-                    maxLength={100}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">{card.question.length}/100</p>
-                </div>
-                <div>
-                  <label className="text-sm font-bold mb-2 block">Message after they say Yes 💖</label>
-                  <Textarea
-                    value={card.yesMessage}
-                    onChange={(e) => updateCard({ yesMessage: e.target.value })}
-                    placeholder="You just made my day! 💕"
-                    rows={4}
-                    maxLength={300}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">{card.yesMessage.length}/300</p>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {step === 2 && (
-            <motion.div key="trick" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-              <h2 className="font-display text-3xl font-bold mb-2">Pick a Trick 😈</h2>
-              <p className="text-muted-foreground mb-6">How should the "No" button misbehave?</p>
-              <div className="grid grid-cols-1 gap-4">
-                {(Object.entries(TRICKS) as [NoButtonTrick, typeof TRICKS[NoButtonTrick]][]).map(([key, trick]) => (
-                  <motion.button
-                    key={key}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => updateCard({ noButtonTrick: key })}
-                    className={`p-5 rounded-xl text-left transition-all border-2 flex items-center gap-4 ${
-                      card.noButtonTrick === key ? 'border-primary shadow-lg ring-2 ring-primary/20 bg-secondary' : 'border-border hover:border-primary/30'
-                    }`}
-                  >
-                    <span className="text-3xl">{trick.emoji}</span>
-                    <div>
-                      <div className="font-bold text-lg">{trick.name}</div>
-                      <div className="text-sm text-muted-foreground">{trick.description}</div>
-                    </div>
-                  </motion.button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {step === 3 && (
-            <motion.div key="stickers" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-              <h2 className="font-display text-3xl font-bold mb-2">Add Stickers ✨</h2>
-              <p className="text-muted-foreground mb-6">Tap to add stickers to your card</p>
-              <div className="grid grid-cols-4 gap-3 mb-6">
-                {(Object.entries(STICKERS) as [StickerType, typeof STICKERS[StickerType]][]).map(([key, sticker]) => (
-                  <motion.button
-                    key={key}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => {
-                      updateCard({
-                        stickers: [
-                          ...card.stickers,
-                          {
-                            type: key,
-                            x: 10 + Math.random() * 80,
-                            y: 10 + Math.random() * 80,
-                            scale: 0.8 + Math.random() * 0.4,
-                            rotation: (Math.random() - 0.5) * 30,
-                          },
-                        ],
-                      });
-                    }}
-                    className="p-4 rounded-xl border border-border hover:border-primary/30 transition-colors text-center"
-                  >
-                    <span className="text-3xl">{sticker.emoji}</span>
-                    <div className="text-xs text-muted-foreground mt-1">{sticker.name}</div>
-                  </motion.button>
-                ))}
-              </div>
-              {card.stickers.length > 0 && (
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">{card.stickers.length} sticker(s) added</span>
-                  <Button variant="ghost" size="sm" onClick={() => updateCard({ stickers: [] })}>
-                    Clear all
-                  </Button>
-                </div>
-              )}
-            </motion.div>
-          )}
-
-          {step === 4 && (
-            <motion.div key="preview" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-              <h2 className="font-display text-3xl font-bold mb-2">Preview Your Card 👀</h2>
-              <p className="text-muted-foreground mb-6">This is how your crush will see it — try clicking the buttons!</p>
-              <CardPreview card={card} interactive />
-            </motion.div>
-          )}
-
-          {step === 5 && (
-            <motion.div key="details" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-              <h2 className="font-display text-3xl font-bold mb-2">Who's it for? 💌</h2>
-              <p className="text-muted-foreground mb-6">Add names to make it personal</p>
-              <div className="space-y-6">
-                <div>
-                  <label className="text-sm font-bold mb-2 block">Recipient's Name 💘</label>
-                  <Input
-                    value={card.recipientName || ''}
-                    onChange={(e) => updateCard({ recipientName: e.target.value })}
-                    placeholder="Your crush's name..."
-                    maxLength={50}
-                    className="text-lg"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-bold mb-2 block">Your Name (sender) 💝</label>
-                  <Input
-                    value={card.senderName || ''}
-                    onChange={(e) => updateCard({ senderName: e.target.value })}
-                    placeholder="Your name..."
-                    maxLength={50}
-                    className="text-lg"
-                  />
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Navigation */}
-        <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
-          <Button
-            variant="outline"
-            onClick={() => setStep((s) => s - 1)}
-            disabled={step === 0}
-            className="rounded-full"
+      <AnimatePresence mode="wait">
+        {!showPreview ? (
+          <motion.div
+            key="builder"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, x: -30 }}
+            className="max-w-2xl mx-auto px-4 py-8"
           >
-            <ArrowLeft className="w-4 h-4 mr-1" /> Back
-          </Button>
-          {step < STEPS.length - 1 ? (
-            <Button
-              onClick={() => setStep((s) => s + 1)}
-              disabled={!canProceed()}
-              className="rounded-full"
-            >
-              {step === 4 ? 'Looks great!' : 'Next'} <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-          ) : (
-            <Button onClick={handleCheckout} disabled={!canProceed()} className="rounded-full animate-pulse-glow text-lg px-8">
-              Send It — $2.99 💳
-            </Button>
-          )}
-        </div>
-      </div>
+            <div className="text-center mb-8">
+              <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">Create Your Card</h1>
+              <p className="text-muted-foreground">Customize every detail, then preview it</p>
+            </div>
+
+            <div className="space-y-4">
+              {/* Names & Message Section */}
+              <AccordionSection
+                id="names"
+                icon={<Heart className="w-5 h-5 text-primary fill-primary" />}
+                title="Names & Message"
+                isOpen={openSections.has('names')}
+                onToggle={() => toggleSection('names')}
+              >
+                <div className="space-y-5">
+                  <div>
+                    <label className="text-sm font-semibold mb-1.5 block text-foreground">Their Name</label>
+                    <Input
+                      value={card.recipientName || ''}
+                      onChange={(e) => updateCard({ recipientName: e.target.value })}
+                      placeholder="e.g. Sarah"
+                      maxLength={50}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-semibold mb-1.5 block text-foreground">Your Name</label>
+                    <Input
+                      value={card.senderName || ''}
+                      onChange={(e) => updateCard({ senderName: e.target.value })}
+                      placeholder="e.g. Alex"
+                      maxLength={50}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-semibold mb-1.5 block text-foreground flex items-center gap-1.5">
+                      <Type className="w-4 h-4" /> Card Title
+                    </label>
+                    <Input
+                      value={card.question}
+                      onChange={(e) => updateCard({ question: e.target.value })}
+                      placeholder="Will you be my Valentine?"
+                      maxLength={100}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">Customize the main question on the card</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-semibold mb-1.5 block text-foreground">Sweet Note</label>
+                    <Textarea
+                      value={card.yesMessage}
+                      onChange={(e) => updateCard({ yesMessage: e.target.value })}
+                      placeholder="I promise to buy you snacks and send you cute cat memes!"
+                      rows={3}
+                      maxLength={300}
+                    />
+                  </div>
+                </div>
+              </AccordionSection>
+
+              {/* No Button Trick Section */}
+              <AccordionSection
+                id="trick"
+                icon={<Wand2 className="w-5 h-5 text-primary" />}
+                title={`"No" Button Trick`}
+                isOpen={openSections.has('trick')}
+                onToggle={() => toggleSection('trick')}
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {(Object.entries(TRICKS) as [NoButtonTrick, typeof TRICKS[NoButtonTrick]][]).map(([key, trick]) => (
+                    <motion.button
+                      key={key}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => updateCard({ noButtonTrick: key })}
+                      className={`p-4 rounded-xl text-left transition-all border-2 ${
+                        card.noButtonTrick === key
+                          ? 'border-primary bg-primary/5 shadow-md'
+                          : 'border-border hover:border-primary/30'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">{trick.emoji}</span>
+                        <div>
+                          <div className="font-semibold text-sm">{trick.name}</div>
+                          <div className="text-xs text-muted-foreground">{trick.description}</div>
+                        </div>
+                      </div>
+                    </motion.button>
+                  ))}
+                </div>
+              </AccordionSection>
+
+              {/* Stickers Section */}
+              <AccordionSection
+                id="stickers"
+                icon={<Sparkles className="w-5 h-5 text-primary" />}
+                title="Sticker / Decoration"
+                isOpen={openSections.has('stickers')}
+                onToggle={() => toggleSection('stickers')}
+              >
+                <p className="text-xs text-muted-foreground mb-3">Shown on the card</p>
+                <div className="grid grid-cols-4 gap-3 mb-4">
+                  {(Object.entries(STICKERS) as [StickerType, typeof STICKERS[StickerType]][]).map(([key, sticker]) => {
+                    const isAdded = card.stickers.some((s) => s.type === key);
+                    return (
+                      <motion.button
+                        key={key}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.92 }}
+                        onClick={() => {
+                          if (isAdded) {
+                            updateCard({ stickers: card.stickers.filter((s) => s.type !== key) });
+                          } else {
+                            updateCard({
+                              stickers: [
+                                ...card.stickers,
+                                {
+                                  type: key,
+                                  x: 10 + Math.random() * 80,
+                                  y: 10 + Math.random() * 80,
+                                  scale: 0.8 + Math.random() * 0.4,
+                                  rotation: (Math.random() - 0.5) * 30,
+                                },
+                              ],
+                            });
+                          }
+                        }}
+                        className={`p-3 rounded-xl border-2 transition-all text-center ${
+                          isAdded
+                            ? 'border-primary bg-primary/5 shadow-md'
+                            : 'border-border hover:border-primary/30'
+                        }`}
+                      >
+                        <span className="text-3xl block">{sticker.emoji}</span>
+                        <div className="text-xs text-muted-foreground mt-1">{sticker.name}</div>
+                        {isAdded && (
+                          <div className="text-[10px] text-primary font-semibold mt-0.5">Added ✓</div>
+                        )}
+                      </motion.button>
+                    );
+                  })}
+                </div>
+                {card.stickers.length > 0 && (
+                  <Button variant="ghost" size="sm" onClick={() => updateCard({ stickers: [] })} className="text-muted-foreground">
+                    Clear all ({card.stickers.length})
+                  </Button>
+                )}
+              </AccordionSection>
+
+              {/* Theme Section */}
+              <AccordionSection
+                id="theme"
+                icon={<Palette className="w-5 h-5 text-primary" />}
+                title="Card Theme"
+                isOpen={openSections.has('theme')}
+                onToggle={() => toggleSection('theme')}
+              >
+                <div className="grid grid-cols-2 gap-3">
+                  {(Object.entries(THEMES) as [CardTheme, typeof THEMES[CardTheme]][]).map(([key, theme]) => (
+                    <motion.button
+                      key={key}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => updateCard({ theme: key })}
+                      className={`p-3 rounded-xl text-left transition-all border-2 ${
+                        card.theme === key
+                          ? 'border-primary shadow-md ring-2 ring-primary/20'
+                          : 'border-border hover:border-primary/30'
+                      }`}
+                    >
+                      <div className={`w-full h-16 rounded-lg mb-2 ${theme.bg}`} />
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-lg">{theme.emoji}</span>
+                        <div>
+                          <div className="font-semibold text-xs">{theme.name}</div>
+                          <div className="text-[10px] text-muted-foreground">{theme.description}</div>
+                        </div>
+                      </div>
+                    </motion.button>
+                  ))}
+                </div>
+              </AccordionSection>
+            </div>
+
+            {/* Preview Button */}
+            <div className="mt-8 text-center">
+              <Button
+                onClick={() => setShowPreview(true)}
+                disabled={!canPreview}
+                size="lg"
+                className="rounded-full text-lg px-10 py-6 animate-pulse-glow"
+              >
+                <Eye className="w-5 h-5 mr-2" /> Preview Your Card
+              </Button>
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="preview"
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 30 }}
+            className="max-w-lg mx-auto px-4 py-8"
+          >
+            <div className="text-center mb-6">
+              <h2 className="font-display text-3xl font-bold text-foreground mb-1">Preview</h2>
+              <p className="text-muted-foreground text-sm">Try clicking the buttons! This is what they'll see.</p>
+            </div>
+
+            <CardPreview card={card} interactive />
+
+            <div className="flex items-center gap-4 mt-8 justify-center">
+              <Button
+                variant="outline"
+                size="lg"
+                className="rounded-full px-8"
+                onClick={() => setShowPreview(false)}
+              >
+                Go Back & Edit
+              </Button>
+              <Button
+                size="lg"
+                className="rounded-full px-8 bg-gradient-to-r from-primary to-rose-500 text-primary-foreground animate-pulse-glow"
+                onClick={handleSaveAndShare}
+              >
+                Save & Share 💎
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
+
+/* Reusable accordion section */
+const AccordionSection = ({
+  id,
+  icon,
+  title,
+  isOpen,
+  onToggle,
+  children,
+}: {
+  id: string;
+  icon: React.ReactNode;
+  title: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) => (
+  <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+    <button
+      onClick={onToggle}
+      className="w-full flex items-center justify-between p-5 hover:bg-muted/50 transition-colors"
+    >
+      <div className="flex items-center gap-3">
+        {icon}
+        <span className="font-display text-lg font-semibold text-foreground">{title}</span>
+      </div>
+      <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+        <ChevronDown className="w-5 h-5 text-muted-foreground" />
+      </motion.div>
+    </button>
+    <AnimatePresence initial={false}>
+      {isOpen && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: 'auto', opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.25, ease: 'easeInOut' }}
+          className="overflow-hidden"
+        >
+          <div className="px-5 pb-5">{children}</div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </div>
+);
 
 export default CreateCard;
