@@ -1,8 +1,8 @@
-import { motion } from 'framer-motion';
-import { Heart } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import DemoCard from '@/components/DemoCard';
+import { motion } from "framer-motion";
+import { Heart } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import DemoCard from "@/components/DemoCard";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -16,8 +16,8 @@ const Landing = () => {
             key={i}
             className="absolute text-2xl opacity-10"
             initial={{
-              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
-              y: (typeof window !== 'undefined' ? window.innerHeight : 800) + 50,
+              x: Math.random() * (typeof window !== "undefined" ? window.innerWidth : 1000),
+              y: (typeof window !== "undefined" ? window.innerHeight : 800) + 50,
             }}
             animate={{
               y: -50,
@@ -27,10 +27,10 @@ const Landing = () => {
               duration: 8 + Math.random() * 6,
               repeat: Infinity,
               delay: Math.random() * 5,
-              ease: 'linear',
+              ease: "linear",
             }}
           >
-            {['💖', '💕', '💗', '❤️', '🌹'][i % 5]}
+            {["💖", "💕", "💗", "❤️", "🌹"][i % 5]}
           </motion.div>
         ))}
       </div>
@@ -42,7 +42,11 @@ const Landing = () => {
             <Heart className="w-8 h-8 text-primary fill-primary" />
             <span className="font-display text-2xl font-bold text-gradient-crush">CrushCards</span>
           </div>
-          <Button onClick={() => navigate('/create')} size="lg" className="rounded-full font-bold shadow-lg animate-pulse-glow">
+          <Button
+            onClick={() => navigate("/create")}
+            size="lg"
+            className="rounded-full font-bold shadow-lg animate-pulse-glow"
+          >
             Create Your Card 💌
           </Button>
         </div>
@@ -51,11 +55,7 @@ const Landing = () => {
       {/* Hero */}
       <main className="relative z-10 max-w-6xl mx-auto px-6 pt-12 pb-24">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7 }}
-          >
+          <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }}>
             <motion.div
               className="text-6xl mb-6"
               animate={{ rotate: [0, -5, 5, 0] }}
@@ -64,24 +64,23 @@ const Landing = () => {
               💘
             </motion.div>
             <h1 className="font-display text-5xl md:text-6xl font-extrabold leading-tight mb-6">
-              Make them say{' '}
-              <span className="text-gradient-crush">Yes!</span>
+              Make them say <span className="text-gradient-crush">Yes!</span>
               <br />
               <span className="text-3xl md:text-4xl font-bold text-muted-foreground">
                 (because they literally can't say no 😈)
               </span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8 max-w-lg">
-              Create a playful Valentine's card with a tricky "No" button that runs away, 
-              shrinks, or changes text. Send it to your crush and watch the magic happen!
+              Create a playful Valentine's card with a tricky "No" button that runs away, shrinks, or changes text. Send
+              it to your crush and watch the magic happen!
             </p>
             <div className="flex flex-wrap gap-4">
               <Button
-                onClick={() => navigate('/create')}
+                onClick={() => navigate("/create")}
                 size="lg"
                 className="rounded-full text-lg px-10 py-6 font-bold shadow-xl animate-pulse-glow"
               >
-                Create Your Card — $2.99 💖
+                Create Your Card 💖
               </Button>
             </div>
             <div className="mt-8 flex items-center gap-6 text-sm text-muted-foreground">
@@ -116,10 +115,10 @@ const Landing = () => {
           </h2>
           <div className="grid md:grid-cols-4 gap-8">
             {[
-              { step: '1', emoji: '🎨', title: 'Pick a Theme', desc: 'Choose from 8 gorgeous Valentine\'s themes' },
-              { step: '2', emoji: '✍️', title: 'Write Your Message', desc: 'Add your personal question and love note' },
-              { step: '3', emoji: '😈', title: 'Choose a Trick', desc: 'Pick how the "No" button misbehaves' },
-              { step: '4', emoji: '🔗', title: 'Share the Link', desc: 'Send it to your crush and wait for the magic' },
+              { step: "1", emoji: "🎨", title: "Pick a Theme", desc: "Choose from 8 gorgeous Valentine's themes" },
+              { step: "2", emoji: "✍️", title: "Write Your Message", desc: "Add your personal question and love note" },
+              { step: "3", emoji: "😈", title: "Choose a Trick", desc: 'Pick how the "No" button misbehaves' },
+              { step: "4", emoji: "🔗", title: "Share the Link", desc: "Send it to your crush and wait for the magic" },
             ].map((item, i) => (
               <motion.div
                 key={item.step}
@@ -141,7 +140,7 @@ const Landing = () => {
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-border py-8 text-center text-sm text-muted-foreground">
-        <p>Made with 💖 by CrushCards · $2.99 per card</p>
+        <p>Made with 💖 by CrushCards </p>
       </footer>
     </div>
   );
