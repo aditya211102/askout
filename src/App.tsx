@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import CreateCard from "./pages/CreateCard";
 import CardViewer from "./pages/CardViewer";
+import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -19,6 +20,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/create" element={<CreateCard />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/card/:id" element={<CardViewer />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
