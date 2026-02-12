@@ -291,7 +291,7 @@ const CreateCard = () => {
                 className="rounded-full px-8 bg-gradient-to-r from-primary to-rose-500 text-primary-foreground animate-pulse-glow"
                 onClick={handleSaveAndShare}
               >
-                Save & Share 💎
+                Save & Share 💕
               </Button>
             </div>
           </motion.div>
