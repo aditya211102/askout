@@ -36,6 +36,7 @@ const CardViewer = () => {
           noButtonTrick: data.no_button_trick as CrushCard['noButtonTrick'],
           stickers: (data.stickers as any) || [],
           recipientName: data.recipient_name || undefined,
+          senderName: (data as any).sender_name || undefined,
           paid: data.paid,
         });
       } catch {
@@ -189,6 +190,9 @@ const CardViewer = () => {
               </motion.div>
               <h1 className={`font-display text-4xl font-bold mb-4 ${theme.text}`}>Yay! 💕</h1>
               <p className={`text-xl leading-relaxed ${theme.accent}`}>{card.yesMessage}</p>
+              {card.senderName && (
+                <p className={`text-sm mt-4 font-medium ${theme.accent}`}>With love, {card.senderName} 💕</p>
+              )}
               <div className="mt-8 flex justify-center gap-2">
                 {['💖', '💕', '💗', '💘', '❤️'].map((h, i) => (
                   <motion.span
