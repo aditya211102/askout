@@ -14,6 +14,7 @@ import {
   TRICKS,
   STICKERS,
 } from '@/lib/card-types';
+import { Badge } from '@/components/ui/badge';
 import CardPreview from '@/components/CardPreview';
 
 type SectionId = 'names' | 'trick' | 'stickers' | 'theme';
@@ -236,7 +237,13 @@ const CreateCard = () => {
                           : 'border-border hover:border-primary/30'
                       }`}
                     >
-                      <div className={`w-full h-16 rounded-lg mb-2 ${theme.bg}`} />
+                      <div className={`w-full h-16 rounded-lg mb-2 ${theme.bg} relative`}>
+                        {theme.premium && (
+                          <Badge className="absolute top-1.5 right-1.5 bg-gradient-to-r from-amber-500 to-yellow-400 text-white border-0 text-[10px] px-1.5 py-0 shadow-sm">
+                            ✦ Premium
+                          </Badge>
+                        )}
+                      </div>
                       <div className="flex items-center gap-1.5">
                         <span className="text-lg">{theme.emoji}</span>
                         <div>
