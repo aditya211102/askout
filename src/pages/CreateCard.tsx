@@ -203,10 +203,14 @@ const CreateCard = () => {
                       >
                         {sticker.premium && (
                           <Badge className="absolute -top-1.5 -right-1.5 bg-gradient-to-r from-amber-500 to-yellow-400 text-white border-0 text-[9px] px-1.5 py-0 shadow-sm z-10">
-                            PRO
+                            Premium
                           </Badge>
                         )}
-                        <span className="text-3xl block">{sticker.emoji}</span>
+                        {sticker.image ? (
+                          <img src={sticker.image} alt={sticker.name} className="w-14 h-14 mx-auto object-contain" />
+                        ) : (
+                          <span className="text-3xl block">{sticker.emoji}</span>
+                        )}
                         <div className="text-xs text-muted-foreground mt-1">{sticker.name}</div>
                         {isAdded && (
                           <div className="text-[10px] text-primary font-semibold mt-0.5">Added ✓</div>
@@ -245,7 +249,7 @@ const CreateCard = () => {
                       <div className={`w-full h-16 rounded-lg mb-2 ${theme.bg} relative`}>
                         {theme.premium && (
                           <Badge className="absolute top-1.5 right-1.5 bg-gradient-to-r from-amber-500 to-yellow-400 text-white border-0 text-[10px] px-1.5 py-0 shadow-sm">
-                            ✦ Premium
+                            Premium
                           </Badge>
                         )}
                       </div>
