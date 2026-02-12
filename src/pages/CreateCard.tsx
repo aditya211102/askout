@@ -169,7 +169,7 @@ const CreateCard = () => {
                 onToggle={() => toggleSection('stickers')}
               >
                 <p className="text-xs text-muted-foreground mb-3">Shown on the card</p>
-                <div className="grid grid-cols-4 gap-3 mb-4">
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-4">
                   {(Object.entries(STICKERS) as [StickerType, typeof STICKERS[StickerType]][]).map(([key, sticker]) => {
                     const isAdded = card.stickers.some((s) => s.type === key);
                     return (
@@ -195,12 +195,17 @@ const CreateCard = () => {
                             });
                           }
                         }}
-                        className={`p-3 rounded-xl border-2 transition-all text-center ${
+                        className={`relative p-3 rounded-xl border-2 transition-all text-center ${
                           isAdded
                             ? 'border-primary bg-primary/5 shadow-md'
                             : 'border-border hover:border-primary/30'
                         }`}
                       >
+                        {sticker.premium && (
+                          <Badge className="absolute -top-1.5 -right-1.5 bg-gradient-to-r from-amber-500 to-yellow-400 text-white border-0 text-[9px] px-1.5 py-0 shadow-sm z-10">
+                            PRO
+                          </Badge>
+                        )}
                         <span className="text-3xl block">{sticker.emoji}</span>
                         <div className="text-xs text-muted-foreground mt-1">{sticker.name}</div>
                         {isAdded && (

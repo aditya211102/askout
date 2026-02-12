@@ -10,7 +10,7 @@ export type CardTheme =
 
 export type NoButtonTrick = 'runaway' | 'shrinking' | 'swap' | 'disguise';
 
-export type StickerType = 'heart' | 'rose' | 'cupid' | 'sparkle' | 'kiss' | 'ring' | 'letter' | 'teddy';
+export type StickerType = 'heart' | 'rose' | 'cupid' | 'sparkle' | 'kiss' | 'ring' | 'letter' | 'teddy' | 'love-bear' | 'cute-cat' | 'heart-bunny' | 'dancing-hearts' | 'kissy-bear' | 'hug-bears' | 'love-penguin' | 'roses-for-you';
 
 export interface StickerPlacement {
   type: StickerType;
@@ -50,13 +50,21 @@ export const TRICKS: Record<NoButtonTrick, { name: string; emoji: string; descri
   disguise: { name: 'Disguise', emoji: '🎭', description: 'No button becomes another Yes' },
 };
 
-export const STICKERS: Record<StickerType, { emoji: string; name: string }> = {
+export const STICKERS: Record<StickerType, { emoji: string; name: string; premium?: boolean }> = {
   heart: { emoji: '💖', name: 'Heart' },
   rose: { emoji: '🌹', name: 'Rose' },
   cupid: { emoji: '💘', name: 'Cupid Arrow' },
   sparkle: { emoji: '✨', name: 'Sparkle' },
   kiss: { emoji: '💋', name: 'Kiss' },
-  ring: { emoji: '💍', name: 'Ring' },
+  ring: { emoji: '💍', name: 'Ring', premium: true },
   letter: { emoji: '💌', name: 'Love Letter' },
   teddy: { emoji: '🧸', name: 'Teddy Bear' },
+  'love-bear': { emoji: '🐻', name: 'Love Bear' },
+  'cute-cat': { emoji: '🐱', name: 'Cute Cat' },
+  'heart-bunny': { emoji: '🐰', name: 'Heart Bunny' },
+  'dancing-hearts': { emoji: '💞', name: 'Dancing Hearts', premium: true },
+  'kissy-bear': { emoji: '🐻‍❄️', name: 'Kissy Bear', premium: true },
+  'hug-bears': { emoji: '🤗', name: 'Hug Bears', premium: true },
+  'love-penguin': { emoji: '🐧', name: 'Love Penguin', premium: true },
+  'roses-for-you': { emoji: '💐', name: 'Roses For You', premium: true },
 };
