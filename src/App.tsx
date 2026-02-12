@@ -7,6 +7,7 @@ import Landing from "./pages/Landing";
 import CreateCard from "./pages/CreateCard";
 import CardViewer from "./pages/CardViewer";
 import Checkout from "./pages/Checkout";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/create" element={<CreateCard />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/card/:id" element={<CardViewer />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
