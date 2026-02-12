@@ -16,6 +16,7 @@ import {
 } from '@/lib/card-types';
 import { Badge } from '@/components/ui/badge';
 import CardPreview from '@/components/CardPreview';
+import PlanDialog, { type PlanType } from '@/components/PlanDialog';
 
 type SectionId = 'names' | 'trick' | 'stickers' | 'theme';
 
@@ -23,6 +24,7 @@ const CreateCard = () => {
   const navigate = useNavigate();
   const [openSections, setOpenSections] = useState<Set<SectionId>>(new Set(['names']));
   const [showPreview, setShowPreview] = useState(false);
+  const [showPlanDialog, setShowPlanDialog] = useState(false);
   const [card, setCard] = useState<CrushCard>({
     theme: 'classic',
     question: 'Will you be my Valentine?',
@@ -45,8 +47,14 @@ const CreateCard = () => {
   const canPreview = card.question.trim().length > 0 && card.yesMessage.trim().length > 0;
 
   const handleSaveAndShare = () => {
-    sessionStorage.setItem('pendingCard', JSON.stringify(card));
-    navigate('/checkout');
+    setShowPlanDialog(true);
+  };
+
+  const handlePlanSelect = (plan: PlanType) => {
+    localStorage.setItem('pendingCard', JSON.stringify(card));
+    localStorage.setItem('pendingPlan', plan);
+    setShowPlanDialog(false);
+    navigate('/auth');
   };
 
   return (
@@ -313,6 +321,12 @@ const CreateCard = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <PlanDialog
+        open={showPlanDialog}
+        onClose={() => setShowPlanDialog(false)}
+        onSelect={handlePlanSelect}
+      />
     </div>
   );
 };
