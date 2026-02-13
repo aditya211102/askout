@@ -42,8 +42,13 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // Determine base URL: use test mode unless DODO_LIVE_MODE is set
+    const baseUrl = Deno.env.get("DODO_LIVE_MODE") === "true"
+      ? "https://live.dodopayments.com"
+      : "https://test.dodopayments.com";
+
     // Create Dodo Payments checkout session via Checkout Sessions API
-    const response = await fetch("https://live.dodopayments.com/checkouts", {
+    const response = await fetch(`${baseUrl}/checkouts`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -58,7 +63,7 @@ Deno.serve(async (req: Request) => {
 
     if (!response.ok) {
       const err = await response.text();
-      console.error("Dodo API error:", err);
+      console.error("Dodo API error:", response.status, err);
       return new Response(JSON.stringify({ error: "Payment creation failed" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
