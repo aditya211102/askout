@@ -49,6 +49,7 @@ Deno.serve(async (req: Request) => {
 
     if (
       eventType === "payment.completed" ||
+      eventType === "payment.succeeded" ||
       eventType === "payment_intent.succeeded" ||
       eventType === "order.completed"
     ) {
