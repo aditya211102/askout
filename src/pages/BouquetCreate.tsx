@@ -14,6 +14,7 @@ import {
 } from '@/lib/bouquet-types';
 import type { PlanType } from '@/components/PlanDialog';
 import PlanDialog from '@/components/PlanDialog';
+import BouquetPreview from '@/components/BouquetPreview';
 
 const BouquetCreate = () => {
   const navigate = useNavigate();
@@ -189,52 +190,15 @@ const BouquetCreate = () => {
 
           {/* Preview */}
           <div className="lg:sticky lg:top-24 lg:self-start">
-            <div className="surface-elevated rounded-lg border border-border p-8 min-h-[420px] flex flex-col items-center justify-center relative overflow-hidden">
+            <div className="surface-elevated rounded-lg border border-border p-8 min-h-[460px] flex flex-col items-center justify-center relative overflow-hidden">
               <p className="font-mono-label text-muted-foreground absolute top-4 left-4">Preview</p>
-
-              {/* Bouquet arrangement */}
-              <div className="relative w-56 h-72 flex flex-col items-center justify-end mt-8">
-                {/* Flowers */}
-                <div className="absolute bottom-24 flex flex-wrap items-end justify-center gap-0 px-2 max-w-[200px]">
-                  <AnimatePresence>
-                    {selectedFlowers.map((flower, i) => (
-                      <motion.img
-                        key={flower.id}
-                        src={flower.image}
-                        alt={flower.name}
-                        initial={{ scale: 0, y: 20, opacity: 0 }}
-                        animate={{ scale: 1, y: 0, opacity: 1 }}
-                        exit={{ scale: 0, y: 20, opacity: 0 }}
-                        transition={{ type: 'spring', delay: i * 0.05 }}
-                        className="w-14 h-14 object-contain -mx-1"
-                        style={{ transform: `rotate(${(i - selectedFlowers.length / 2) * 12}deg)` }}
-                      />
-                    ))}
-                  </AnimatePresence>
-                </div>
-
-                {/* Bow */}
-                {bouquet.bowStyle !== 'minimal' && (
-                  <div
-                    className="absolute bottom-[72px] z-10 w-10 h-4 rounded-full"
-                    style={{ backgroundColor: BOW_STYLES.find((b) => b.id === bouquet.bowStyle)?.color }}
-                  />
-                )}
-
-                {/* Vase/Wrapping */}
-                <div className={`w-28 h-24 rounded-b-[40px] rounded-t-lg border border-border/60 ${WRAPPING_PATTERNS.find(w => w.id === bouquet.wrappingPattern)?.preview}`} />
+              <div className="mt-6">
+                <BouquetPreview
+                  bouquet={bouquet}
+                  senderName={senderName}
+                  recipientName={recipientName}
+                />
               </div>
-
-              {selectedFlowers.length === 0 && (
-                <p className="text-sm text-muted-foreground mt-4 font-display italic">Select flowers above</p>
-              )}
-
-              {bouquet.messageCard && bouquet.messageText && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-6 border border-border rounded-lg p-4 max-w-[200px] text-center bg-card">
-                  <p className="text-xs italic text-muted-foreground leading-relaxed font-display">{bouquet.messageText}</p>
-                  {senderName && <p className="text-[10px] text-warm-wine mt-2 font-medium">— {senderName}</p>}
-                </motion.div>
-              )}
             </div>
 
             <div className="mt-6 text-center">
