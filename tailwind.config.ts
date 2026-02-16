@@ -51,13 +51,14 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        crush: {
-          pink: "hsl(var(--crush-pink))",
-          rose: "hsl(var(--crush-rose))",
-          blush: "hsl(var(--crush-blush))",
-          gold: "hsl(var(--crush-gold))",
-          purple: "hsl(var(--crush-purple))",
-          dark: "hsl(var(--crush-dark))",
+        sm: {
+          blush: "hsl(var(--sm-blush))",
+          lavender: "hsl(var(--sm-lavender))",
+          cream: "hsl(var(--sm-cream))",
+          gold: "hsl(var(--sm-gold))",
+          rose: "hsl(var(--sm-rose))",
+          peach: "hsl(var(--sm-peach))",
+          wine: "hsl(var(--sm-wine))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
@@ -74,6 +75,9 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        xl: "calc(var(--radius) + 4px)",
+        "2xl": "calc(var(--radius) + 8px)",
+        "3xl": "1.5rem",
       },
       keyframes: {
         "accordion-down": {

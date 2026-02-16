@@ -6,42 +6,44 @@
 
 @layer base {
   :root {
-    --background: 340 30% 97%;
-    --foreground: 340 30% 10%;
+    --background: 30 60% 98%;
+    --foreground: 280 20% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 340 30% 10%;
+    --card-foreground: 280 20% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 340 30% 10%;
+    --popover-foreground: 280 20% 15%;
 
-    --primary: 340 82% 52%;
+    --primary: 340 60% 65%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 340 40% 94%;
-    --secondary-foreground: 340 30% 20%;
+    --secondary: 280 30% 92%;
+    --secondary-foreground: 280 20% 25%;
 
-    --muted: 340 20% 94%;
-    --muted-foreground: 340 10% 45%;
+    --muted: 30 30% 95%;
+    --muted-foreground: 280 10% 45%;
 
-    --accent: 25 95% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 45 100% 50%;
+    --accent-foreground: 45 80% 15%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 340 20% 90%;
-    --input: 340 20% 90%;
-    --ring: 340 82% 52%;
+    --border: 280 15% 90%;
+    --input: 280 15% 90%;
+    --ring: 340 60% 65%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    --crush-pink: 340 82% 52%;
-    --crush-rose: 350 80% 60%;
-    --crush-blush: 340 60% 90%;
-    --crush-gold: 40 90% 55%;
-    --crush-purple: 280 60% 55%;
-    --crush-dark: 340 30% 10%;
+    /* ShareMoments palette */
+    --sm-blush: 346 100% 95%;
+    --sm-lavender: 280 52% 81%;
+    --sm-cream: 35 100% 97%;
+    --sm-gold: 51 100% 50%;
+    --sm-rose: 340 60% 65%;
+    --sm-peach: 25 100% 90%;
+    --sm-wine: 340 50% 30%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -70,11 +72,25 @@
 }
 
 @layer utilities {
-  .text-gradient-crush {
+  .text-gradient-brand {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(340, 82%, 52%), hsl(280, 60%, 55%), hsl(340, 82%, 52%));
+    background-image: linear-gradient(135deg, hsl(340, 60%, 65%), hsl(280, 52%, 65%), hsl(340, 60%, 65%));
     background-size: 200% 200%;
-    animation: gradient-shift 3s ease infinite;
+    animation: gradient-shift 4s ease infinite;
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
   }
 
   @keyframes gradient-shift {
@@ -84,19 +100,42 @@
 
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-12px); }
   }
 
   .animate-float {
-    animation: float 3s ease-in-out infinite;
+    animation: float 4s ease-in-out infinite;
   }
 
-  @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 20px hsl(340 82% 52% / 0.3); }
-    50% { box-shadow: 0 0 40px hsl(340 82% 52% / 0.6); }
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 20px hsl(340 60% 65% / 0.2), 0 0 40px hsl(340 60% 65% / 0.1); }
+    50% { box-shadow: 0 0 30px hsl(340 60% 65% / 0.4), 0 0 60px hsl(340 60% 65% / 0.2); }
   }
 
-  .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
+  .animate-glow {
+    animation: glow-pulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes petal-fall {
+    0% { transform: translateY(-10%) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  }
+
+  .animate-petal {
+    animation: petal-fall linear infinite;
+  }
+
+  @keyframes vinyl-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .animate-vinyl {
+    animation: vinyl-spin 3s linear infinite;
+  }
+
+  .animate-vinyl-paused {
+    animation: vinyl-spin 3s linear infinite;
+    animation-play-state: paused;
   }
 }
