@@ -1,11 +1,20 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Heart } from "lucide-react";
+import { Heart, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import DemoCard from "@/components/DemoCard";
+import { supabase } from "@/integrations/supabase/client";
 
 const Landing = () => {
+  const [loggedIn, setLoggedIn] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setLoggedIn(!!session);
+    });
+  }, []);
 
   return (
     <div className="min-h-screen bg-background overflow-hidden">
@@ -42,13 +51,25 @@ const Landing = () => {
             <Heart className="w-8 h-8 text-primary fill-primary" />
             <span className="font-display text-2xl font-bold text-gradient-crush">CrushCards</span>
           </div>
-          <Button
-            onClick={() => navigate("/create")}
-            size="lg"
-            className="rounded-full font-bold shadow-lg animate-pulse-glow"
-          >
-            Create Your Card 💌
-          </Button>
+          <div className="flex items-center gap-3">
+            {loggedIn && (
+              <Button
+                variant="outline"
+                onClick={() => navigate("/profile")}
+                size="sm"
+                className="rounded-full"
+              >
+                <User className="w-4 h-4 mr-1" /> My Cards
+              </Button>
+            )}
+            <Button
+              onClick={() => navigate("/create")}
+              size="lg"
+              className="rounded-full font-bold shadow-lg animate-pulse-glow"
+            >
+              Create Your Card 💌
+            </Button>
+          </div>
         </div>
       </header>
 
