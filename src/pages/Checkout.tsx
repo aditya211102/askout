@@ -19,7 +19,6 @@ const Checkout = () => {
 
       const cardData = JSON.parse(raw);
 
-      // Handle file uploads for voice messages
       let voiceNoteUrl: string | null = null;
       let voiceBgUrl: string | null = null;
 
@@ -28,27 +27,18 @@ const Checkout = () => {
           const audioBlob = base64ToBlob(cardData.voiceAudioBase64);
           const audioPath = `${session.user.id}/${Date.now()}-voice.webm`;
           const { data: audioData } = await supabase.storage.from('voice-notes').upload(audioPath, audioBlob, { contentType: 'audio/webm' });
-          if (audioData) {
-            const { data: urlData } = supabase.storage.from('voice-notes').getPublicUrl(audioData.path);
-            voiceNoteUrl = urlData.publicUrl;
-          }
+          if (audioData) { const { data: u } = supabase.storage.from('voice-notes').getPublicUrl(audioData.path); voiceNoteUrl = u.publicUrl; }
         }
         if (cardData.voiceBgBase64) {
           const bgBlob = base64ToBlob(cardData.voiceBgBase64);
           const bgPath = `${session.user.id}/${Date.now()}-bg.jpg`;
           const { data: bgData } = await supabase.storage.from('voice-backgrounds').upload(bgPath, bgBlob, { contentType: 'image/jpeg' });
-          if (bgData) {
-            const { data: urlData } = supabase.storage.from('voice-backgrounds').getPublicUrl(bgData.path);
-            voiceBgUrl = urlData.publicUrl;
-          }
+          if (bgData) { const { data: u } = supabase.storage.from('voice-backgrounds').getPublicUrl(bgData.path); voiceBgUrl = u.publicUrl; }
         }
       }
 
       const insertData: any = {
-        user_id: session.user.id,
-        plan,
-        paid: false,
-        product_type: productType,
+        user_id: session.user.id, plan, paid: false, product_type: productType,
         question: cardData.question || 'Will you go out with me?',
         yes_message: cardData.yesMessage || '',
         recipient_name: cardData.recipientName || null,
@@ -68,11 +58,7 @@ const Checkout = () => {
       }
 
       const { data, error } = await supabase.from('cards').insert(insertData).select('id').single();
-
-      if (error || !data || cancelled) {
-        console.error('Failed to save', error);
-        return;
-      }
+      if (error || !data || cancelled) { console.error('Failed to save', error); return; }
 
       localStorage.removeItem('pendingCard');
       localStorage.removeItem('pendingPlan');
@@ -83,11 +69,7 @@ const Checkout = () => {
         body: { cardId: data.id, plan, redirectUrl },
       });
 
-      if (checkoutError || !checkoutData?.payment_link) {
-        console.error('Failed to create checkout', checkoutError);
-        return;
-      }
-
+      if (checkoutError || !checkoutData?.payment_link) { console.error('Checkout failed', checkoutError); return; }
       window.location.href = checkoutData.payment_link;
     };
 
@@ -96,13 +78,11 @@ const Checkout = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[hsl(var(--sm-cream))] to-[hsl(var(--sm-blush))] flex items-center justify-center p-4">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
-        <div className="glass-strong rounded-3xl p-8 shadow-xl text-center space-y-6">
-          <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5 }} className="text-5xl mx-auto w-fit">✨</motion.div>
-          <h2 className="font-display text-2xl font-bold">Preparing your moment...</h2>
-          <p className="text-muted-foreground">Redirecting to secure payment</p>
-        </div>
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative texture-grain">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
+        <div className="w-8 h-8 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin mx-auto mb-6" />
+        <p className="font-display text-lg font-semibold">Preparing your moment</p>
+        <p className="text-muted-foreground text-sm mt-1">Redirecting to secure payment...</p>
       </motion.div>
     </div>
   );
