@@ -16,45 +16,60 @@ export type Database = {
     Tables: {
       cards: {
         Row: {
+          bouquet_data: Json | null
           created_at: string
           id: string
           no_button_trick: string
           paid: boolean
           plan: string
+          product_type: string
           question: string
           recipient_name: string | null
           sender_name: string | null
           stickers: Json
           theme: string
           user_id: string | null
+          voice_background_image: string | null
+          voice_duration: number | null
+          voice_note_url: string | null
           yes_message: string
         }
         Insert: {
+          bouquet_data?: Json | null
           created_at?: string
           id?: string
           no_button_trick?: string
           paid?: boolean
           plan?: string
+          product_type?: string
           question?: string
           recipient_name?: string | null
           sender_name?: string | null
           stickers?: Json
           theme?: string
           user_id?: string | null
+          voice_background_image?: string | null
+          voice_duration?: number | null
+          voice_note_url?: string | null
           yes_message?: string
         }
         Update: {
+          bouquet_data?: Json | null
           created_at?: string
           id?: string
           no_button_trick?: string
           paid?: boolean
           plan?: string
+          product_type?: string
           question?: string
           recipient_name?: string | null
           sender_name?: string | null
           stickers?: Json
           theme?: string
           user_id?: string | null
+          voice_background_image?: string | null
+          voice_duration?: number | null
+          voice_note_url?: string | null
           yes_message?: string
         }
         Relationships: []
