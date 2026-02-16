@@ -14,7 +14,6 @@ import {
   TRICKS,
   STICKERS,
 } from '@/lib/card-types';
-import { Badge } from '@/components/ui/badge';
 import CardPreview from '@/components/CardPreview';
 import PlanDialog, { type PlanType } from '@/components/PlanDialog';
 
@@ -58,9 +57,9 @@ const CreateCard = () => {
         <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
           <button onClick={() => navigate('/')} className="flex items-center gap-3 text-foreground hover:text-warm-wine transition-colors">
             <ArrowLeft className="w-4 h-4" />
-            <span className="font-mono-label">Cards</span>
+            <span className="font-mono-label">Back</span>
           </button>
-          <span className="font-display text-sm text-muted-foreground italic">Ask Out Cards</span>
+          <span className="font-display text-sm text-muted-foreground italic">Ask Out Card</span>
         </div>
       </header>
 
@@ -69,7 +68,7 @@ const CreateCard = () => {
           <motion.div key="builder" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, x: -20 }} className="max-w-2xl mx-auto px-6 py-12">
             <div className="mb-12">
               <p className="font-mono-label text-muted-foreground mb-3">Customize</p>
-              <h1 className="font-display text-4xl md:text-5xl font-bold tracking-tight">Create your card</h1>
+              <h1 className="font-display text-4xl md:text-5xl font-bold tracking-tight italic">Create your card</h1>
             </div>
 
             <div className="space-y-3">
@@ -110,8 +109,7 @@ const CreateCard = () => {
                         }}
                         className={`relative p-3 rounded-lg border text-center transition-all ${isAdded ? 'border-foreground bg-foreground/[0.03]' : 'border-border hover:border-foreground/20'}`}
                       >
-                        {sticker.premium && <span className="absolute -top-1 -right-1 font-mono-label text-[8px] bg-warm-gold text-white px-1 py-0.5 rounded">PRO</span>}
-                        {sticker.image ? <img src={sticker.image} alt={sticker.name} className="w-10 h-10 mx-auto object-contain" /> : <span className="text-2xl block">{sticker.emoji}</span>}
+                        <img src={sticker.image} alt={sticker.name} className="w-10 h-10 mx-auto object-contain" />
                         <div className="text-[10px] text-muted-foreground mt-1">{sticker.name}</div>
                       </button>
                     );
@@ -127,9 +125,7 @@ const CreateCard = () => {
                       onClick={() => updateCard({ theme: key })}
                       className={`p-3 rounded-lg text-left transition-all border ${card.theme === key ? 'border-foreground' : 'border-border hover:border-foreground/20'}`}
                     >
-                      <div className={`w-full h-12 rounded-md mb-2 ${theme.bg} relative`}>
-                        {theme.premium && <span className="absolute top-1 right-1 font-mono-label text-[8px] bg-warm-gold text-white px-1 py-0.5 rounded">PRO</span>}
-                      </div>
+                      <div className={`w-full h-12 rounded-md mb-2 ${theme.bg}`} />
                       <div className="font-medium text-xs">{theme.name}</div>
                     </button>
                   ))}
@@ -149,7 +145,7 @@ const CreateCard = () => {
             <CardPreview card={card} interactive />
             <div className="flex items-center gap-4 mt-10 justify-center">
               <Button variant="outline" className="rounded-full px-8" onClick={() => setShowPreview(false)}>Edit</Button>
-              <Button className="rounded-full px-8 bg-foreground text-background" onClick={() => setShowPlanDialog(true)}>Save & share</Button>
+              <Button className="rounded-full px-8 bg-foreground text-background" onClick={() => setShowPlanDialog(true)}>Save & share — $2.99</Button>
             </div>
           </motion.div>
         )}

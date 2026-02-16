@@ -1,9 +1,8 @@
 export interface FlowerType {
   id: string;
   name: string;
-  emoji: string;
+  image: string;
   color: string;
-  premium: boolean;
 }
 
 export interface BouquetConfig {
@@ -16,32 +15,32 @@ export interface BouquetConfig {
 }
 
 export const FLOWERS: FlowerType[] = [
-  { id: 'red-rose', name: 'Red Rose', emoji: '🌹', color: '#e11d48', premium: false },
-  { id: 'pink-rose', name: 'Pink Rose', emoji: '🌸', color: '#ec4899', premium: false },
-  { id: 'white-rose', name: 'White Rose', emoji: '🤍', color: '#f1f5f9', premium: false },
-  { id: 'tulip', name: 'Tulip', emoji: '🌷', color: '#f472b6', premium: false },
-  { id: 'sunflower', name: 'Sunflower', emoji: '🌻', color: '#fbbf24', premium: false },
-  { id: 'daisy', name: 'Daisy', emoji: '🌼', color: '#fde68a', premium: false },
-  { id: 'lily', name: 'Lily', emoji: '💮', color: '#fdf2f8', premium: true },
-  { id: 'orchid', name: 'Orchid', emoji: '🪻', color: '#a855f7', premium: true },
-  { id: 'peony', name: 'Peony', emoji: '🏵️', color: '#fb7185', premium: true },
-  { id: 'lavender', name: 'Lavender', emoji: '💜', color: '#c084fc', premium: true },
-  { id: 'hydrangea', name: 'Hydrangea', emoji: '💐', color: '#818cf8', premium: true },
-  { id: 'exotic', name: 'Exotic Mix', emoji: '🌺', color: '#f97316', premium: true },
+  { id: 'red-rose', name: 'Red Rose', image: '/flowers/red-rose.png', color: '#e11d48' },
+  { id: 'pink-rose', name: 'Pink Rose', image: '/flowers/pink-rose.png', color: '#ec4899' },
+  { id: 'white-rose', name: 'White Rose', image: '/flowers/white-rose.png', color: '#f1f5f9' },
+  { id: 'tulip', name: 'Tulip', image: '/flowers/tulip.png', color: '#f472b6' },
+  { id: 'sunflower', name: 'Sunflower', image: '/flowers/sunflower.png', color: '#fbbf24' },
+  { id: 'daisy', name: 'Daisy', image: '/flowers/daisy.png', color: '#fde68a' },
+  { id: 'lily', name: 'Lily', image: '/flowers/lily.png', color: '#fdf2f8' },
+  { id: 'orchid', name: 'Orchid', image: '/flowers/orchid.png', color: '#a855f7' },
+  { id: 'peony', name: 'Peony', image: '/flowers/peony.png', color: '#fb7185' },
+  { id: 'lavender', name: 'Lavender', image: '/flowers/lavender.png', color: '#c084fc' },
+  { id: 'hydrangea', name: 'Hydrangea', image: '/flowers/hydrangea.png', color: '#818cf8' },
+  { id: 'anemone', name: 'Anemone', image: '/flowers/anemone.png', color: '#f97316' },
 ];
 
 export const WRAPPING_PATTERNS = [
-  { id: 'solid', name: 'Solid', preview: 'bg-gradient-to-b from-sm-cream to-sm-blush' },
-  { id: 'dots', name: 'Polka Dots', preview: 'bg-sm-blush' },
-  { id: 'stripes', name: 'Stripes', preview: 'bg-gradient-to-r from-sm-blush via-white to-sm-blush' },
-  { id: 'floral', name: 'Floral', preview: 'bg-gradient-to-br from-sm-peach to-sm-lavender' },
   { id: 'kraft', name: 'Kraft', preview: 'bg-gradient-to-b from-amber-100 to-amber-200' },
+  { id: 'ivory', name: 'Ivory', preview: 'bg-gradient-to-b from-[hsl(40,33%,97%)] to-[hsl(38,40%,94%)]' },
+  { id: 'sage', name: 'Sage', preview: 'bg-gradient-to-b from-[hsl(90,12%,82%)] to-[hsl(90,12%,72%)]' },
+  { id: 'blush', name: 'Blush', preview: 'bg-gradient-to-b from-[hsl(8,35%,90%)] to-[hsl(8,35%,85%)]' },
+  { id: 'charcoal', name: 'Charcoal', preview: 'bg-gradient-to-b from-neutral-700 to-neutral-800' },
 ];
 
 export const BOW_STYLES = [
-  { id: 'classic', name: 'Classic', emoji: '🎀' },
-  { id: 'ribbon', name: 'Ribbon', emoji: '🎗️' },
-  { id: 'minimal', name: 'Minimal', emoji: '✨' },
+  { id: 'classic', name: 'Satin', color: 'hsl(352,36%,38%)' },
+  { id: 'ribbon', name: 'Twine', color: 'hsl(33,50%,58%)' },
+  { id: 'minimal', name: 'None', color: 'transparent' },
 ];
 
 export const DEFAULT_BOUQUET: BouquetConfig = {
@@ -49,6 +48,6 @@ export const DEFAULT_BOUQUET: BouquetConfig = {
   ribbonColor: '#ec4899',
   messageCard: false,
   messageText: '',
-  wrappingPattern: 'solid',
+  wrappingPattern: 'kraft',
   bowStyle: 'classic',
 };

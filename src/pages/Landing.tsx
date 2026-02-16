@@ -11,27 +11,56 @@ const products = [
     label: "CARDS",
     number: "01",
     description: "A playful card with a trick \"No\" button. They literally can't say no.",
-    price: "From $2.99",
+    price: "$2.99",
     route: "/askout/create",
-    accent: "bg-warm-wine",
+    preview: (
+      <div className="w-full h-full bg-gradient-to-br from-rose-100 to-pink-200 rounded-lg flex items-center justify-center p-6">
+        <div className="bg-white/80 backdrop-blur rounded-lg p-5 shadow-sm text-center max-w-[180px]">
+          <p className="font-display text-sm italic text-rose-900 mb-3">Will you go out with me?</p>
+          <div className="flex gap-2 justify-center">
+            <span className="px-3 py-1 bg-rose-500 text-white rounded text-xs">Yes!</span>
+            <span className="px-3 py-1 bg-rose-200 text-rose-700 rounded text-xs">No</span>
+          </div>
+        </div>
+      </div>
+    ),
   },
   {
     title: "Digital Bouquets",
     label: "BOUQUETS",
     number: "02",
-    description: "Handpick flowers, wrap them beautifully, and send a bouquet that blooms on screen.",
-    price: "From $2.99",
+    description: "Handpick watercolor blooms and wrap them into a bouquet that unfolds on screen.",
+    price: "$2.99",
     route: "/bouquet/create",
-    accent: "bg-warm-gold",
+    preview: (
+      <div className="w-full h-full bg-[hsl(40,33%,97%)] rounded-lg flex items-center justify-center p-4">
+        <div className="flex flex-wrap items-end justify-center gap-0 max-w-[160px]">
+          {['/flowers/red-rose.png', '/flowers/daisy.png', '/flowers/tulip.png', '/flowers/lavender.png', '/flowers/pink-rose.png'].map((src, i) => (
+            <img key={src} src={src} alt="" className="w-12 h-12 object-contain -mx-1" style={{ transform: `rotate(${(i - 2) * 14}deg)` }} />
+          ))}
+        </div>
+      </div>
+    ),
   },
   {
-    title: "Voice Messages",
+    title: "Voice Notes",
     label: "VOICE",
     number: "03",
-    description: "Record a heartfelt message. Delivered on a vintage vinyl with your photo.",
-    price: "From $2.99",
+    description: "Record a heartfelt message. Delivered on a warm journal with a waveform.",
+    price: "$2.99",
     route: "/voice/create",
-    accent: "bg-warm-brown",
+    preview: (
+      <div className="w-full h-full bg-[hsl(30,20%,18%)] rounded-lg flex flex-col items-center justify-center p-4">
+        <div className="bg-[hsl(38,25%,92%)] rounded-lg p-4 w-full max-w-[180px]">
+          <div className="flex items-center gap-[2px] h-8 justify-center">
+            {Array.from({ length: 20 }, (_, i) => (
+              <div key={i} className="w-[2px] rounded-full bg-[hsl(352,36%,50%)]" style={{ height: `${20 + Math.random() * 80}%` }} />
+            ))}
+          </div>
+          <p className="font-mono text-[9px] text-center mt-2 text-[hsl(20,18%,40%)]">00:00 / 00:42</p>
+        </div>
+      </div>
+    ),
   },
 ];
 
@@ -112,7 +141,7 @@ const Landing = () => {
         <div className="h-px bg-border" />
       </div>
 
-      {/* Products */}
+      {/* Products with Previews */}
       <section id="products" className="max-w-6xl mx-auto px-6 py-24 scroll-mt-8">
         <motion.p
           initial={{ opacity: 0 }}
@@ -120,41 +149,38 @@ const Landing = () => {
           viewport={{ once: true }}
           className="font-mono-label text-muted-foreground mb-16"
         >
-          Three products
+          Three products — $2.99 each
         </motion.p>
 
-        <div className="space-y-0">
+        <div className="grid md:grid-cols-3 gap-6">
           {products.map((product, i) => (
             <motion.div
               key={product.title}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
-              transition={{ delay: i * 0.08, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ delay: i * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             >
               <button
                 onClick={() => navigate(product.route)}
-                className="w-full text-left group border-b border-border py-10 md:py-14 flex items-start md:items-center justify-between gap-6 hover:pl-4 transition-all duration-500"
+                className="w-full text-left group"
               >
-                <div className="flex items-start md:items-center gap-6 md:gap-10 flex-1">
-                  <span className="font-mono-label text-muted-foreground/50 pt-1 md:pt-0">
-                    {product.number}
-                  </span>
+                {/* Preview card */}
+                <div className="aspect-[4/3] rounded-lg border border-border overflow-hidden mb-5 transition-transform duration-500 group-hover:scale-[1.02] group-hover:shadow-lg">
+                  {product.preview}
+                </div>
+                <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tight group-hover:text-warm-wine transition-colors duration-500">
+                    <p className="font-mono-label text-muted-foreground/50 mb-1">{product.number}</p>
+                    <h2 className="font-display text-xl font-bold tracking-tight group-hover:text-warm-wine transition-colors duration-300">
                       {product.title}
                     </h2>
-                    <p className="text-muted-foreground mt-2 max-w-md text-sm md:text-base leading-relaxed">
+                    <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
                       {product.description}
                     </p>
                   </div>
-                </div>
-                <div className="flex items-center gap-4 shrink-0">
-                  <span className="font-mono-label text-muted-foreground hidden md:block">
-                    {product.price}
-                  </span>
-                  <div className="w-10 h-10 rounded-full border border-border flex items-center justify-center group-hover:bg-foreground group-hover:border-foreground transition-all duration-500">
-                    <ArrowRight className="w-4 h-4 text-foreground group-hover:text-background transition-colors duration-500" />
+                  <div className="w-8 h-8 rounded-full border border-border flex items-center justify-center shrink-0 mt-6 group-hover:bg-foreground group-hover:border-foreground transition-all duration-300">
+                    <ArrowRight className="w-3.5 h-3.5 text-foreground group-hover:text-background transition-colors duration-300" />
                   </div>
                 </div>
               </button>
@@ -169,7 +195,7 @@ const Landing = () => {
         <div className="grid md:grid-cols-3 gap-16">
           {[
             { num: "01", title: "Choose & customize", body: "Pick a product and personalize every detail to make it yours." },
-            { num: "02", title: "Quick checkout", body: "Secure payment starting at $2.99. No subscriptions, ever." },
+            { num: "02", title: "Quick checkout", body: "Secure payment at $2.99. No subscriptions, ever." },
             { num: "03", title: "Share the link", body: "Send it to someone special and watch the magic unfold." },
           ].map((step, i) => (
             <motion.div

@@ -65,11 +65,7 @@ const CardPreview = ({ card, interactive = false, onAccept }: CardPreviewProps) 
             animate={{ scale: s.scale, rotate: s.rotation }}
             transition={{ type: 'spring', delay: i * 0.05 }}
           >
-            {stickerData.image ? (
-              <img src={stickerData.image} alt={stickerData.name} className="w-10 h-10 object-contain" />
-            ) : (
-              <span className="text-2xl">{stickerData.emoji}</span>
-            )}
+            <img src={stickerData.image} alt={stickerData.name} className="w-10 h-10 object-contain" />
           </motion.div>
         );
       })}

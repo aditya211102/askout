@@ -122,7 +122,7 @@ const CardViewer = () => {
           animate={{ scale: s.scale, rotate: s.rotation, y: [0, -10, 0] }}
           transition={{ y: { repeat: Infinity, duration: 2 + i * 0.3 }, scale: { delay: i * 0.1 } }}
         >
-          {STICKERS[s.type].emoji}
+          <img src={STICKERS[s.type].image} alt={STICKERS[s.type].name} className="w-10 h-10 object-contain" />
         </motion.div>
       ))}
 

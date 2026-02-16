@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import PlanDialog, { type PlanType } from '@/components/PlanDialog';
 
 const MAX_DURATION = 60;
+const BAR_COUNT = 40;
 
 const VoiceCreate = () => {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ const VoiceCreate = () => {
   const [bgImage, setBgImage] = useState<File | null>(null);
   const [bgPreview, setBgPreview] = useState<string | null>(null);
   const [showPlanDialog, setShowPlanDialog] = useState(false);
+  const [waveformBars] = useState(() => Array.from({ length: BAR_COUNT }, () => 0.2 + Math.random() * 0.8));
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -83,7 +85,7 @@ const VoiceCreate = () => {
   };
 
   const fmt = (s: number) => `${Math.floor(s / 60).toString().padStart(2, '0')}:${Math.floor(s % 60).toString().padStart(2, '0')}`;
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const progress = duration > 0 ? currentTime / duration : 0;
 
   const handlePlanSelect = async (plan: PlanType) => {
     const audioB64 = audioBlob ? await blobToBase64(audioBlob) : null;
@@ -100,124 +102,152 @@ const VoiceCreate = () => {
     navigate('/auth');
   };
 
+  const activeBar = Math.floor(progress * BAR_COUNT);
+
   return (
-    <div className="min-h-screen bg-background relative texture-grain">
-      <header className="sticky top-0 z-20 bg-background/90 backdrop-blur-sm border-b border-border">
+    <div className="min-h-screen bg-[hsl(30,20%,18%)] text-[hsl(40,33%,90%)] relative">
+      {/* Warm dark grain overlay */}
+      <div className="fixed inset-0 opacity-[0.03] pointer-events-none" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+      }} />
+
+      <header className="sticky top-0 z-20 bg-[hsl(30,20%,18%)]/90 backdrop-blur-sm border-b border-white/10">
         <div className="max-w-xl mx-auto px-6 py-4 flex items-center justify-between">
-          <button onClick={() => navigate('/')} className="flex items-center gap-3 text-foreground hover:text-warm-wine transition-colors">
+          <button onClick={() => navigate('/')} className="flex items-center gap-3 text-[hsl(40,33%,80%)] hover:text-[hsl(40,33%,95%)] transition-colors">
             <ArrowLeft className="w-4 h-4" />
-            <span className="font-mono-label">Voice</span>
+            <span className="font-mono-label">Back</span>
           </button>
-          <span className="font-display text-sm text-muted-foreground italic">Voice Message</span>
+          <span className="font-display text-sm text-[hsl(40,33%,60%)] italic">Voice Note</span>
         </div>
       </header>
 
-      <div className="max-w-xl mx-auto px-6 py-12">
-        <div className="mb-12">
-          <p className="font-mono-label text-muted-foreground mb-3">Record</p>
-          <h1 className="font-display text-4xl md:text-5xl font-bold tracking-tight">Your message</h1>
-          <p className="text-muted-foreground mt-3 text-sm">Up to 60 seconds. Delivered on a vinyl.</p>
+      <div className="max-w-xl mx-auto px-6 py-12 relative z-10">
+        <div className="text-center mb-12">
+          <p className="font-mono-label text-[hsl(40,33%,55%)] mb-4">Record up to 60 seconds</p>
+          <h1 className="font-display text-4xl md:text-5xl font-bold tracking-tight italic text-[hsl(40,33%,92%)]">
+            Your voice note
+          </h1>
         </div>
 
         {/* Names */}
         <div className="grid grid-cols-2 gap-3 mb-10">
           <div>
-            <label className="font-mono-label text-muted-foreground block mb-2">For</label>
-            <Input value={recipientName} onChange={(e) => setRecipientName(e.target.value)} placeholder="Their name" maxLength={50} className="bg-transparent" />
+            <label className="font-mono-label text-[hsl(40,33%,55%)] block mb-2">For</label>
+            <Input value={recipientName} onChange={(e) => setRecipientName(e.target.value)} placeholder="Their name" maxLength={50} className="bg-white/5 border-white/10 text-[hsl(40,33%,90%)] placeholder:text-[hsl(40,33%,40%)]" />
           </div>
           <div>
-            <label className="font-mono-label text-muted-foreground block mb-2">From</label>
-            <Input value={senderName} onChange={(e) => setSenderName(e.target.value)} placeholder="Your name" maxLength={50} className="bg-transparent" />
+            <label className="font-mono-label text-[hsl(40,33%,55%)] block mb-2">From</label>
+            <Input value={senderName} onChange={(e) => setSenderName(e.target.value)} placeholder="Your name" maxLength={50} className="bg-white/5 border-white/10 text-[hsl(40,33%,90%)] placeholder:text-[hsl(40,33%,40%)]" />
           </div>
         </div>
 
-        {/* Vinyl */}
-        <div className="surface-elevated rounded-lg border border-border p-10 flex flex-col items-center mb-8">
-          <div className="relative w-52 h-52 mb-8">
-            {/* Vinyl disc */}
-            <div className={`w-full h-full rounded-full bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 shadow-2xl flex items-center justify-center ${playing ? 'animate-vinyl' : ''}`}>
-              <div className="absolute inset-4 rounded-full border border-neutral-700/20" />
-              <div className="absolute inset-8 rounded-full border border-neutral-700/10" />
-              <div className="absolute inset-12 rounded-full border border-neutral-700/20" />
-              <div className="absolute inset-16 rounded-full border border-neutral-700/10" />
-              {/* Label */}
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-warm-wine to-warm-gold flex items-center justify-center shadow-inner z-10">
-                <div className="w-2.5 h-2.5 rounded-full bg-neutral-900" />
+        {/* Main recording card — notebook/journal aesthetic */}
+        <div className="rounded-xl bg-[hsl(38,25%,92%)] text-[hsl(20,18%,15%)] p-8 mb-8 shadow-2xl relative overflow-hidden">
+          {/* Notebook lines */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            backgroundImage: 'repeating-linear-gradient(transparent, transparent 27px, hsl(352,36%,60%,0.1) 27px, hsl(352,36%,60%,0.1) 28px)',
+            backgroundPosition: '0 20px',
+          }} />
+          {/* Red margin line */}
+          <div className="absolute left-12 top-0 bottom-0 w-px bg-[hsl(352,36%,70%,0.3)]" />
+
+          <div className="relative z-10">
+            {/* Photo area */}
+            {bgPreview && (
+              <div className="mb-6 relative">
+                <div className="bg-white p-2 pb-8 rounded shadow-md max-w-[200px] mx-auto -rotate-2">
+                  <img src={bgPreview} alt="Memory" className="w-full h-36 object-cover rounded-sm" />
+                  <button onClick={() => { setBgImage(null); setBgPreview(null); }} className="absolute top-4 right-[calc(50%-90px)] w-6 h-6 rounded-full bg-foreground/80 text-background flex items-center justify-center">
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
               </div>
+            )}
+
+            {/* Timer */}
+            <div className="text-center mb-6">
+              <span className="font-mono text-3xl font-bold tracking-widest text-[hsl(20,18%,20%)]">
+                {recording ? fmt(duration) : audioUrl ? `${fmt(currentTime)} / ${fmt(duration)}` : '00:00'}
+              </span>
             </div>
 
-            {/* Progress ring */}
-            <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 208 208">
-              <circle cx="104" cy="104" r="100" fill="none" stroke="hsl(var(--border))" strokeWidth="2" />
-              <circle cx="104" cy="104" r="100" fill="none" stroke="hsl(var(--warm-wine))" strokeWidth="2"
-                strokeDasharray={`${2 * Math.PI * 100}`}
-                strokeDashoffset={`${2 * Math.PI * 100 * (1 - progress / 100)}`}
-                strokeLinecap="round" className="transition-all duration-300" />
-            </svg>
-          </div>
+            {/* Waveform visualization */}
+            <div className="flex items-center justify-center gap-[2px] h-16 mb-8 px-4">
+              {waveformBars.map((height, i) => (
+                <motion.div
+                  key={i}
+                  className="w-[3px] rounded-full transition-colors duration-150"
+                  style={{
+                    height: `${height * 100}%`,
+                    backgroundColor: recording
+                      ? 'hsl(352,36%,45%)'
+                      : i <= activeBar
+                        ? 'hsl(352,36%,45%)'
+                        : 'hsl(20,10%,75%)',
+                  }}
+                  animate={recording ? {
+                    scaleY: [1, 0.5 + Math.random() * 1.2, 1],
+                  } : {}}
+                  transition={recording ? {
+                    repeat: Infinity,
+                    duration: 0.3 + Math.random() * 0.4,
+                    ease: 'easeInOut',
+                  } : {}}
+                />
+              ))}
+            </div>
 
-          {/* Timer */}
-          <div className="font-mono text-2xl font-bold text-foreground mb-8 tracking-widest">
-            {recording ? fmt(duration) : audioUrl ? `${fmt(currentTime)} / ${fmt(duration)}` : '00:00'}
-          </div>
-
-          {/* Controls */}
-          <div className="flex items-center gap-4">
+            {/* Controls */}
+            <div className="flex items-center justify-center gap-4">
+              {!audioUrl && !recording && (
+                <button onClick={startRecording} className="w-16 h-16 rounded-full bg-[hsl(352,50%,45%)] flex items-center justify-center text-white shadow-lg hover:opacity-90 transition-all hover:scale-105">
+                  <Mic className="w-7 h-7" />
+                </button>
+              )}
+              {recording && (
+                <button onClick={stopRecording} className="w-16 h-16 rounded-full bg-[hsl(352,50%,45%)] flex items-center justify-center text-white shadow-lg animate-pulse">
+                  <Square className="w-6 h-6 fill-white" />
+                </button>
+              )}
+              {audioUrl && !recording && (
+                <>
+                  <button onClick={togglePlay} className="w-16 h-16 rounded-full bg-[hsl(20,18%,15%)] flex items-center justify-center text-white shadow-lg hover:opacity-90 transition-all">
+                    {playing ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-0.5" />}
+                  </button>
+                  <button
+                    onClick={() => { setAudioBlob(null); setAudioUrl(null); setDuration(0); setCurrentTime(0); }}
+                    className="font-mono-label text-[hsl(20,10%,55%)] hover:text-[hsl(20,18%,25%)] transition-colors"
+                  >
+                    Re-record
+                  </button>
+                </>
+              )}
+            </div>
             {!audioUrl && !recording && (
-              <button onClick={startRecording} className="w-14 h-14 rounded-full bg-warm-wine flex items-center justify-center text-white shadow-lg hover:opacity-90 transition-opacity">
-                <Mic className="w-6 h-6" />
-              </button>
-            )}
-            {recording && (
-              <button onClick={stopRecording} className="w-14 h-14 rounded-full bg-warm-wine flex items-center justify-center text-white shadow-lg">
-                <Square className="w-5 h-5 fill-white" />
-              </button>
-            )}
-            {audioUrl && !recording && (
-              <>
-                <button onClick={togglePlay} className="w-14 h-14 rounded-full bg-foreground flex items-center justify-center text-background shadow-lg hover:opacity-90 transition-opacity">
-                  {playing ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-0.5" />}
-                </button>
-                <button
-                  onClick={() => { setAudioBlob(null); setAudioUrl(null); setDuration(0); setCurrentTime(0); }}
-                  className="font-mono-label text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Re-record
-                </button>
-              </>
+              <p className="font-display italic text-[hsl(20,10%,55%)] mt-4 text-center text-sm">Tap to record</p>
             )}
           </div>
-          {!audioUrl && !recording && (
-            <p className="font-mono-label text-muted-foreground/60 mt-4">Tap to record</p>
-          )}
         </div>
 
-        {/* Background photo */}
-        <div className="mb-10">
-          <p className="font-mono-label text-muted-foreground mb-4">Background photo <span className="text-muted-foreground/50">(optional)</span></p>
-          {bgPreview ? (
-            <div className="relative inline-block">
-              <img src={bgPreview} alt="Background" className="w-full max-w-[280px] h-44 object-cover rounded-lg border border-border" />
-              <button onClick={() => { setBgImage(null); setBgPreview(null); }} className="absolute top-2 right-2 w-6 h-6 rounded-full bg-foreground/80 text-background flex items-center justify-center">
-                <X className="w-3 h-3" />
-              </button>
-            </div>
-          ) : (
-            <label className="flex flex-col items-center justify-center h-28 rounded-lg border border-dashed border-border hover:border-foreground/30 cursor-pointer transition-colors">
-              <Upload className="w-5 h-5 text-muted-foreground mb-2" />
-              <span className="font-mono-label text-muted-foreground">Upload photo</span>
+        {/* Background photo upload */}
+        {!bgPreview && (
+          <div className="mb-10">
+            <p className="font-mono-label text-[hsl(40,33%,55%)] mb-4">Add a photo <span className="text-[hsl(40,33%,40%)]">(optional)</span></p>
+            <label className="flex flex-col items-center justify-center h-24 rounded-lg border border-dashed border-white/15 hover:border-white/30 cursor-pointer transition-colors">
+              <Upload className="w-5 h-5 text-[hsl(40,33%,50%)] mb-2" />
+              <span className="font-mono-label text-[hsl(40,33%,50%)]">Upload photo</span>
               <input type="file" accept="image/*" onChange={handleBgUpload} className="hidden" />
             </label>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Save */}
         <Button
           onClick={() => setShowPlanDialog(true)}
           disabled={!audioBlob}
-          className="rounded-full px-10 py-6 bg-foreground text-background hover:bg-foreground/90 w-full"
+          className="rounded-full px-10 py-6 bg-[hsl(40,33%,90%)] text-[hsl(20,18%,15%)] hover:bg-[hsl(40,33%,85%)] w-full font-medium disabled:opacity-30"
         >
-          Send voice message
+          Send voice note — $2.99
         </Button>
       </div>
 
