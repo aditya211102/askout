@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import CreateCard from "./pages/CreateCard";
 import CardViewer from "./pages/CardViewer";
+import Profile from "./pages/Profile";
 import Checkout from "./pages/Checkout";
 import Auth from "./pages/Auth";
 import Success from "./pages/Success";
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/success" element={<Success />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/card/:id" element={<CardViewer />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

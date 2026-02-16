@@ -31,7 +31,7 @@ const Auth = () => {
     if (pendingCard) {
       navigate('/checkout');
     } else {
-      navigate('/');
+      navigate('/profile');
     }
   };
 
