@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Heart, User, Sparkles } from "lucide-react";
+import { ArrowRight, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,30 +8,30 @@ import { supabase } from "@/integrations/supabase/client";
 const products = [
   {
     title: "Ask Out Cards",
-    emoji: "💌",
-    description: "Create a playful card with a tricky \"No\" button. They literally can't say no!",
-    badge: "Most Popular",
-    gradient: "from-[hsl(340,60%,85%)] to-[hsl(340,80%,75%)]",
-    price: "$2.99",
+    label: "CARDS",
+    number: "01",
+    description: "A playful card with a trick \"No\" button. They literally can't say no.",
+    price: "From $2.99",
     route: "/askout/create",
+    accent: "bg-warm-wine",
   },
   {
-    title: "Digital Bouquet",
-    emoji: "💐",
-    description: "Handpick stunning flowers, customize the wrapping, and send a bouquet that blooms on screen.",
-    badge: null,
-    gradient: "from-[hsl(25,100%,90%)] to-[hsl(340,60%,85%)]",
-    price: "$2.99",
+    title: "Digital Bouquets",
+    label: "BOUQUETS",
+    number: "02",
+    description: "Handpick flowers, wrap them beautifully, and send a bouquet that blooms on screen.",
+    price: "From $2.99",
     route: "/bouquet/create",
+    accent: "bg-warm-gold",
   },
   {
     title: "Voice Messages",
-    emoji: "🎙️",
-    description: "Record a heartfelt voice note on a vintage vinyl with a Polaroid photo reveal.",
-    badge: null,
-    gradient: "from-[hsl(280,52%,88%)] to-[hsl(280,40%,78%)]",
-    price: "$2.99",
+    label: "VOICE",
+    number: "03",
+    description: "Record a heartfelt message. Delivered on a vintage vinyl with your photo.",
+    price: "From $2.99",
     route: "/voice/create",
+    accent: "bg-warm-brown",
   },
 ];
 
@@ -46,182 +46,153 @@ const Landing = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[hsl(var(--sm-cream))] to-[hsl(var(--sm-blush))] overflow-hidden">
-      {/* Floating petals */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        {Array.from({ length: 12 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute text-xl opacity-[0.07]"
-            initial={{
-              x: Math.random() * (typeof window !== "undefined" ? window.innerWidth : 1000),
-              y: -30,
-            }}
-            animate={{ y: typeof window !== "undefined" ? window.innerHeight + 30 : 900 }}
-            transition={{
-              duration: 10 + Math.random() * 8,
-              repeat: Infinity,
-              delay: Math.random() * 6,
-              ease: "linear",
-            }}
-          >
-            {["🌸", "✨", "🌹", "💫", "🌷"][i % 5]}
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Header */}
-      <header className="relative z-10 py-6 px-6">
+    <div className="min-h-screen bg-background relative texture-grain">
+      {/* Nav */}
+      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-5">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-[hsl(var(--sm-lavender))] flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-display text-2xl font-bold text-gradient-brand">ShareMoments</span>
-          </div>
-          <div className="flex items-center gap-3">
+          <span className="font-display text-lg font-semibold tracking-tight text-foreground">
+            ShareMoments
+          </span>
+          <div className="flex items-center gap-4">
             {loggedIn && (
-              <Button
-                variant="outline"
+              <button
                 onClick={() => navigate("/profile")}
-                size="sm"
-                className="rounded-full glass"
+                className="font-mono-label text-muted-foreground hover:text-foreground transition-colors"
               >
-                <User className="w-4 h-4 mr-1" /> My Moments
-              </Button>
+                Dashboard
+              </button>
             )}
+            <Button
+              onClick={() => navigate(loggedIn ? "/profile" : "/auth")}
+              variant="outline"
+              size="sm"
+              className="rounded-full border-foreground/15 text-xs font-medium hover:bg-foreground hover:text-background transition-all"
+            >
+              {loggedIn ? <><User className="w-3.5 h-3.5 mr-1.5" /> Account</> : "Sign In"}
+            </Button>
           </div>
         </div>
-      </header>
+      </nav>
 
       {/* Hero */}
-      <main className="relative z-10 max-w-6xl mx-auto px-6 pt-16 pb-24">
+      <section className="min-h-[85vh] flex flex-col items-center justify-center px-6 pt-20">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center max-w-3xl mx-auto mb-20"
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center max-w-4xl"
         >
-          <motion.div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass text-sm font-medium text-muted-foreground mb-8"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Sparkles className="w-3.5 h-3.5 text-primary" />
-            3 ways to express your feelings
-          </motion.div>
-          <h1 className="font-display text-5xl md:text-7xl font-extrabold leading-[1.1] mb-6 tracking-tight">
-            Turn Moments
-            <br />
-            Into <span className="text-gradient-brand">Magic</span>
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Create beautiful digital experiences — from playful ask-out cards to blooming bouquets and vinyl voice messages.
+          <p className="font-mono-label text-muted-foreground mb-6">
+            Digital moments, beautifully crafted
           </p>
-          <motion.div
-            className="mt-10"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
+          <h1 className="font-display text-5xl sm:text-6xl md:text-[5.5rem] font-bold leading-[0.95] tracking-tight mb-8">
+            Turn feelings into
+            <br />
+            <span className="font-display italic font-normal text-warm-wine">
+              unforgettable
+            </span>{" "}
+            moments
+          </h1>
+          <p className="text-muted-foreground text-lg md:text-xl max-w-xl mx-auto leading-relaxed mb-12">
+            Three ways to say what matters. Crafted with intention, 
+            delivered with delight.
+          </p>
+          <Button
+            onClick={() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth" })}
+            className="rounded-full px-8 py-6 text-sm font-medium bg-foreground text-background hover:bg-foreground/90 transition-all group"
           >
-            <Button
-              onClick={() => {
-                document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              size="lg"
-              className="rounded-full text-lg px-10 py-7 font-bold shadow-xl animate-glow bg-gradient-to-r from-primary to-[hsl(var(--sm-lavender))]"
-            >
-              Create Your Moment ✨
-            </Button>
-          </motion.div>
+            Explore Products
+            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+          </Button>
         </motion.div>
+      </section>
 
-        {/* Product Cards */}
-        <section id="products" className="scroll-mt-8">
-          <div className="grid md:grid-cols-3 gap-6">
-            {products.map((product, i) => (
-              <motion.div
-                key={product.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15, duration: 0.6 }}
-                whileHover={{ y: -8, transition: { duration: 0.3 } }}
+      {/* Divider */}
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="h-px bg-border" />
+      </div>
+
+      {/* Products */}
+      <section id="products" className="max-w-6xl mx-auto px-6 py-24 scroll-mt-8">
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="font-mono-label text-muted-foreground mb-16"
+        >
+          Three products
+        </motion.p>
+
+        <div className="space-y-0">
+          {products.map((product, i) => (
+            <motion.div
+              key={product.title}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: i * 0.08, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <button
                 onClick={() => navigate(product.route)}
-                className="group cursor-pointer"
+                className="w-full text-left group border-b border-border py-10 md:py-14 flex items-start md:items-center justify-between gap-6 hover:pl-4 transition-all duration-500"
               >
-                <div className="glass-strong rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-500">
-                  {/* Gradient top */}
-                  <div className={`h-48 bg-gradient-to-br ${product.gradient} relative flex items-center justify-center`}>
-                    {product.badge && (
-                      <span className="absolute top-4 right-4 text-[11px] font-bold px-3 py-1 rounded-full bg-foreground/90 text-background">
-                        {product.badge}
-                      </span>
-                    )}
-                    <motion.span
-                      className="text-7xl"
-                      animate={{ y: [0, -8, 0] }}
-                      transition={{ repeat: Infinity, duration: 3, delay: i * 0.3 }}
-                    >
-                      {product.emoji}
-                    </motion.span>
-                  </div>
-                  {/* Content */}
-                  <div className="p-6">
-                    <h3 className="font-display text-xl font-bold mb-2">{product.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-4">{product.description}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-muted-foreground">Starting at {product.price}</span>
-                      <span className="text-primary font-semibold text-sm group-hover:translate-x-1 transition-transform">
-                        Create →
-                      </span>
-                    </div>
+                <div className="flex items-start md:items-center gap-6 md:gap-10 flex-1">
+                  <span className="font-mono-label text-muted-foreground/50 pt-1 md:pt-0">
+                    {product.number}
+                  </span>
+                  <div>
+                    <h2 className="font-display text-3xl md:text-5xl font-bold tracking-tight group-hover:text-warm-wine transition-colors duration-500">
+                      {product.title}
+                    </h2>
+                    <p className="text-muted-foreground mt-2 max-w-md text-sm md:text-base leading-relaxed">
+                      {product.description}
+                    </p>
                   </div>
                 </div>
-              </motion.div>
-            ))}
-          </div>
-        </section>
+                <div className="flex items-center gap-4 shrink-0">
+                  <span className="font-mono-label text-muted-foreground hidden md:block">
+                    {product.price}
+                  </span>
+                  <div className="w-10 h-10 rounded-full border border-border flex items-center justify-center group-hover:bg-foreground group-hover:border-foreground transition-all duration-500">
+                    <ArrowRight className="w-4 h-4 text-foreground group-hover:text-background transition-colors duration-500" />
+                  </div>
+                </div>
+              </button>
+            </motion.div>
+          ))}
+        </div>
+      </section>
 
-        {/* How it works */}
-        <motion.section
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mt-32"
-        >
-          <h2 className="font-display text-4xl font-bold text-center mb-4">
-            How it works
-          </h2>
-          <p className="text-center text-muted-foreground mb-16">Three simple steps to create something unforgettable</p>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { step: "01", emoji: "🎨", title: "Choose & Customize", desc: "Pick a product, select your style, and personalize every detail" },
-              { step: "02", emoji: "💳", title: "Quick Checkout", desc: "Secure payment starting at just $2.99" },
-              { step: "03", emoji: "🔗", title: "Share the Magic", desc: "Send the link and watch their reaction unfold" },
-            ].map((item, i) => (
-              <motion.div
-                key={item.step}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.12 }}
-                className="text-center p-8 rounded-3xl glass-strong"
-              >
-                <div className="text-4xl mb-4">{item.emoji}</div>
-                <div className="text-xs font-bold text-primary tracking-widest mb-3">STEP {item.step}</div>
-                <h3 className="font-display text-lg font-bold mb-2">{item.title}</h3>
-                <p className="text-sm text-muted-foreground">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
-      </main>
+      {/* How it works */}
+      <section className="max-w-6xl mx-auto px-6 pb-32">
+        <div className="h-px bg-border mb-24" />
+        <div className="grid md:grid-cols-3 gap-16">
+          {[
+            { num: "01", title: "Choose & customize", body: "Pick a product and personalize every detail to make it yours." },
+            { num: "02", title: "Quick checkout", body: "Secure payment starting at $2.99. No subscriptions, ever." },
+            { num: "03", title: "Share the link", body: "Send it to someone special and watch the magic unfold." },
+          ].map((step, i) => (
+            <motion.div
+              key={step.num}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1, duration: 0.5 }}
+            >
+              <span className="font-mono-label text-warm-gold block mb-4">{step.num}</span>
+              <h3 className="font-display text-xl font-semibold mb-3">{step.title}</h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">{step.body}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-border/50 py-8 text-center text-sm text-muted-foreground">
-        <p>Made with ✨ by ShareMoments</p>
+      <footer className="border-t border-border py-8 px-6">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <span className="font-display text-sm text-muted-foreground">ShareMoments</span>
+          <span className="font-mono-label text-muted-foreground/60">© 2026</span>
+        </div>
       </footer>
     </div>
   );

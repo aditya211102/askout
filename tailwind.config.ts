@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         display: ['"Playfair Display"', 'serif'],
         sans: ['"DM Sans"', 'sans-serif'],
+        mono: ['"Space Mono"', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -51,14 +52,15 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        sm: {
-          blush: "hsl(var(--sm-blush))",
-          lavender: "hsl(var(--sm-lavender))",
-          cream: "hsl(var(--sm-cream))",
-          gold: "hsl(var(--sm-gold))",
-          rose: "hsl(var(--sm-rose))",
-          peach: "hsl(var(--sm-peach))",
-          wine: "hsl(var(--sm-wine))",
+        warm: {
+          ivory: "hsl(var(--warm-ivory))",
+          cream: "hsl(var(--warm-cream))",
+          stone: "hsl(var(--warm-stone))",
+          brown: "hsl(var(--warm-brown))",
+          wine: "hsl(var(--warm-wine))",
+          gold: "hsl(var(--warm-gold))",
+          sage: "hsl(var(--warm-sage))",
+          blush: "hsl(var(--warm-blush))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
@@ -75,9 +77,6 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-        xl: "calc(var(--radius) + 4px)",
-        "2xl": "calc(var(--radius) + 8px)",
-        "3xl": "1.5rem",
       },
       keyframes: {
         "accordion-down": {

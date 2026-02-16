@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Sparkles, ChevronDown, Type, Wand2, Palette, Eye, ArrowLeft } from 'lucide-react';
+import { ChevronDown, Eye, ArrowLeft } from 'lucide-react';
 import {
   type CrushCard,
   type CardTheme,
@@ -28,25 +28,20 @@ const CreateCard = () => {
   const [card, setCard] = useState<CrushCard>({
     theme: 'classic',
     question: 'Will you go out with me?',
-    yesMessage: 'You just made my day! I can\'t wait to see you! 💕',
+    yesMessage: 'You just made my day! I can\'t wait to see you.',
     noButtonTrick: 'runaway',
     stickers: [],
   });
 
   const updateCard = (updates: Partial<CrushCard>) => setCard((prev) => ({ ...prev, ...updates }));
-
   const toggleSection = (id: SectionId) => {
     setOpenSections((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (next.has(id)) next.delete(id); else next.add(id);
       return next;
     });
   };
-
   const canPreview = card.question.trim().length > 0 && card.yesMessage.trim().length > 0;
-
-  const handleSaveAndShare = () => setShowPlanDialog(true);
 
   const handlePlanSelect = (plan: PlanType) => {
     localStorage.setItem('pendingCard', JSON.stringify({ ...card, productType: 'askout' }));
@@ -57,161 +52,104 @@ const CreateCard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[hsl(var(--sm-cream))] to-[hsl(var(--sm-blush))]">
+    <div className="min-h-screen bg-background relative texture-grain">
       {/* Header */}
-      <header className="py-3 px-6 border-b border-border/50 glass-strong sticky top-0 z-20">
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <button onClick={() => navigate('/')} className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
+      <header className="sticky top-0 z-20 bg-background/90 backdrop-blur-sm border-b border-border">
+        <div className="max-w-2xl mx-auto px-6 py-4 flex items-center justify-between">
+          <button onClick={() => navigate('/')} className="flex items-center gap-3 text-foreground hover:text-warm-wine transition-colors">
             <ArrowLeft className="w-4 h-4" />
-            <span className="font-display text-lg font-bold">Ask Out Cards</span>
-            <span className="text-lg">💌</span>
+            <span className="font-mono-label">Cards</span>
           </button>
+          <span className="font-display text-sm text-muted-foreground italic">Ask Out Cards</span>
         </div>
       </header>
 
       <AnimatePresence mode="wait">
         {!showPreview ? (
-          <motion.div
-            key="builder"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, x: -30 }}
-            className="max-w-2xl mx-auto px-4 py-8"
-          >
-            <div className="text-center mb-8">
-              <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-2">Create Your Card</h1>
-              <p className="text-muted-foreground">Customize every detail, then preview it</p>
+          <motion.div key="builder" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, x: -20 }} className="max-w-2xl mx-auto px-6 py-12">
+            <div className="mb-12">
+              <p className="font-mono-label text-muted-foreground mb-3">Customize</p>
+              <h1 className="font-display text-4xl md:text-5xl font-bold tracking-tight">Create your card</h1>
             </div>
 
-            <div className="space-y-4">
-              {/* Names & Message Section */}
-              <AccordionSection
-                id="names"
-                icon={<Sparkles className="w-5 h-5 text-primary" />}
-                title="Names & Message"
-                isOpen={openSections.has('names')}
-                onToggle={() => toggleSection('names')}
-              >
+            <div className="space-y-3">
+              <Section title="Names & Message" isOpen={openSections.has('names')} onToggle={() => toggleSection('names')}>
                 <div className="space-y-5">
-                  <div>
-                    <label className="text-sm font-semibold mb-1.5 block text-foreground">Their Name</label>
-                    <Input value={card.recipientName || ''} onChange={(e) => updateCard({ recipientName: e.target.value })} placeholder="e.g. Sarah" maxLength={50} />
-                  </div>
-                  <div>
-                    <label className="text-sm font-semibold mb-1.5 block text-foreground">Your Name</label>
-                    <Input value={card.senderName || ''} onChange={(e) => updateCard({ senderName: e.target.value })} placeholder="e.g. Alex" maxLength={50} />
-                  </div>
-                  <div>
-                    <label className="text-sm font-semibold mb-1.5 block text-foreground flex items-center gap-1.5">
-                      <Type className="w-4 h-4" /> Your Question
-                    </label>
-                    <Input value={card.question} onChange={(e) => updateCard({ question: e.target.value })} placeholder="Will you go out with me?" maxLength={100} />
-                  </div>
-                  <div>
-                    <label className="text-sm font-semibold mb-1.5 block text-foreground">Sweet Note (shown after Yes)</label>
-                    <Textarea value={card.yesMessage} onChange={(e) => updateCard({ yesMessage: e.target.value })} placeholder="You just made my day!" rows={3} maxLength={300} />
-                  </div>
+                  <Field label="Their name"><Input value={card.recipientName || ''} onChange={(e) => updateCard({ recipientName: e.target.value })} placeholder="Sarah" maxLength={50} className="bg-transparent" /></Field>
+                  <Field label="Your name"><Input value={card.senderName || ''} onChange={(e) => updateCard({ senderName: e.target.value })} placeholder="Alex" maxLength={50} className="bg-transparent" /></Field>
+                  <Field label="Your question"><Input value={card.question} onChange={(e) => updateCard({ question: e.target.value })} placeholder="Will you go out with me?" maxLength={100} className="bg-transparent" /></Field>
+                  <Field label="Message after they say yes"><Textarea value={card.yesMessage} onChange={(e) => updateCard({ yesMessage: e.target.value })} placeholder="You just made my day!" rows={3} maxLength={300} className="bg-transparent" /></Field>
                 </div>
-              </AccordionSection>
+              </Section>
 
-              {/* No Button Trick Section */}
-              <AccordionSection id="trick" icon={<Wand2 className="w-5 h-5 text-primary" />} title={`"No" Button Trick`} isOpen={openSections.has('trick')} onToggle={() => toggleSection('trick')}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Section title="Button trick" isOpen={openSections.has('trick')} onToggle={() => toggleSection('trick')}>
+                <div className="grid grid-cols-2 gap-2">
                   {(Object.entries(TRICKS) as [NoButtonTrick, typeof TRICKS[NoButtonTrick]][]).map(([key, trick]) => (
-                    <motion.button
+                    <button
                       key={key}
-                      whileTap={{ scale: 0.97 }}
                       onClick={() => updateCard({ noButtonTrick: key })}
-                      className={`p-4 rounded-2xl text-left transition-all border-2 ${card.noButtonTrick === key ? 'border-primary bg-primary/5 shadow-md' : 'border-border hover:border-primary/30'}`}
+                      className={`p-4 rounded-lg text-left transition-all border ${card.noButtonTrick === key ? 'border-foreground bg-foreground/[0.03]' : 'border-border hover:border-foreground/20'}`}
                     >
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">{trick.emoji}</span>
-                        <div>
-                          <div className="font-semibold text-sm">{trick.name}</div>
-                          <div className="text-xs text-muted-foreground">{trick.description}</div>
-                        </div>
-                      </div>
-                    </motion.button>
+                      <div className="font-medium text-sm mb-1">{trick.name}</div>
+                      <div className="text-xs text-muted-foreground">{trick.description}</div>
+                    </button>
                   ))}
                 </div>
-              </AccordionSection>
+              </Section>
 
-              {/* Stickers Section */}
-              <AccordionSection id="stickers" icon={<Sparkles className="w-5 h-5 text-primary" />} title="Sticker / Decoration" isOpen={openSections.has('stickers')} onToggle={() => toggleSection('stickers')}>
-                <p className="text-xs text-muted-foreground mb-3">Shown on the card</p>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mb-4">
+              <Section title="Stickers" isOpen={openSections.has('stickers')} onToggle={() => toggleSection('stickers')}>
+                <div className="grid grid-cols-4 gap-2">
                   {(Object.entries(STICKERS) as [StickerType, typeof STICKERS[StickerType]][]).map(([key, sticker]) => {
                     const isAdded = card.stickers.some((s) => s.type === key);
                     return (
-                      <motion.button
+                      <button
                         key={key}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.92 }}
                         onClick={() => {
                           if (isAdded) updateCard({ stickers: card.stickers.filter((s) => s.type !== key) });
                           else updateCard({ stickers: [...card.stickers, { type: key, x: 10 + Math.random() * 80, y: 10 + Math.random() * 80, scale: 0.8 + Math.random() * 0.4, rotation: (Math.random() - 0.5) * 30 }] });
                         }}
-                        className={`relative p-3 rounded-2xl border-2 transition-all text-center ${isAdded ? 'border-primary bg-primary/5 shadow-md' : 'border-border hover:border-primary/30'}`}
+                        className={`relative p-3 rounded-lg border text-center transition-all ${isAdded ? 'border-foreground bg-foreground/[0.03]' : 'border-border hover:border-foreground/20'}`}
                       >
-                        {sticker.premium && (
-                          <Badge className="absolute -top-1.5 -right-1.5 bg-gradient-to-r from-[hsl(var(--sm-gold))] to-amber-400 text-foreground border-0 text-[9px] px-1.5 py-0 shadow-sm z-10">Premium</Badge>
-                        )}
-                        {sticker.image ? <img src={sticker.image} alt={sticker.name} className="w-14 h-14 mx-auto object-contain" /> : <span className="text-3xl block">{sticker.emoji}</span>}
-                        <div className="text-xs text-muted-foreground mt-1">{sticker.name}</div>
-                        {isAdded && <div className="text-[10px] text-primary font-semibold mt-0.5">Added ✓</div>}
-                      </motion.button>
+                        {sticker.premium && <span className="absolute -top-1 -right-1 font-mono-label text-[8px] bg-warm-gold text-white px-1 py-0.5 rounded">PRO</span>}
+                        {sticker.image ? <img src={sticker.image} alt={sticker.name} className="w-10 h-10 mx-auto object-contain" /> : <span className="text-2xl block">{sticker.emoji}</span>}
+                        <div className="text-[10px] text-muted-foreground mt-1">{sticker.name}</div>
+                      </button>
                     );
                   })}
                 </div>
-                {card.stickers.length > 0 && (
-                  <Button variant="ghost" size="sm" onClick={() => updateCard({ stickers: [] })} className="text-muted-foreground">Clear all ({card.stickers.length})</Button>
-                )}
-              </AccordionSection>
+              </Section>
 
-              {/* Theme Section */}
-              <AccordionSection id="theme" icon={<Palette className="w-5 h-5 text-primary" />} title="Card Theme" isOpen={openSections.has('theme')} onToggle={() => toggleSection('theme')}>
-                <div className="grid grid-cols-2 gap-3">
+              <Section title="Theme" isOpen={openSections.has('theme')} onToggle={() => toggleSection('theme')}>
+                <div className="grid grid-cols-2 gap-2">
                   {(Object.entries(THEMES) as [CardTheme, typeof THEMES[CardTheme]][]).map(([key, theme]) => (
-                    <motion.button
+                    <button
                       key={key}
-                      whileTap={{ scale: 0.97 }}
                       onClick={() => updateCard({ theme: key })}
-                      className={`p-3 rounded-2xl text-left transition-all border-2 ${card.theme === key ? 'border-primary shadow-md ring-2 ring-primary/20' : 'border-border hover:border-primary/30'}`}
+                      className={`p-3 rounded-lg text-left transition-all border ${card.theme === key ? 'border-foreground' : 'border-border hover:border-foreground/20'}`}
                     >
-                      <div className={`w-full h-16 rounded-xl mb-2 ${theme.bg} relative`}>
-                        {theme.premium && (
-                          <Badge className="absolute top-1.5 right-1.5 bg-gradient-to-r from-[hsl(var(--sm-gold))] to-amber-400 text-foreground border-0 text-[10px] px-1.5 py-0 shadow-sm">Premium</Badge>
-                        )}
+                      <div className={`w-full h-12 rounded-md mb-2 ${theme.bg} relative`}>
+                        {theme.premium && <span className="absolute top-1 right-1 font-mono-label text-[8px] bg-warm-gold text-white px-1 py-0.5 rounded">PRO</span>}
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-lg">{theme.emoji}</span>
-                        <div>
-                          <div className="font-semibold text-xs">{theme.name}</div>
-                          <div className="text-[10px] text-muted-foreground">{theme.description}</div>
-                        </div>
-                      </div>
-                    </motion.button>
+                      <div className="font-medium text-xs">{theme.name}</div>
+                    </button>
                   ))}
                 </div>
-              </AccordionSection>
+              </Section>
             </div>
 
-            <div className="mt-8 text-center">
-              <Button onClick={() => setShowPreview(true)} disabled={!canPreview} size="lg" className="rounded-full text-lg px-10 py-6 animate-glow bg-gradient-to-r from-primary to-[hsl(var(--sm-lavender))]">
-                <Eye className="w-5 h-5 mr-2" /> Preview Your Card
+            <div className="mt-12 text-center">
+              <Button onClick={() => setShowPreview(true)} disabled={!canPreview} className="rounded-full px-10 py-6 bg-foreground text-background hover:bg-foreground/90">
+                <Eye className="w-4 h-4 mr-2" /> Preview card
               </Button>
             </div>
           </motion.div>
         ) : (
-          <motion.div key="preview" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 30 }} className="max-w-lg mx-auto px-4 py-8">
-            <div className="text-center mb-6">
-              <h2 className="font-display text-3xl font-bold text-foreground mb-1">Preview</h2>
-              <p className="text-muted-foreground text-sm">Try clicking the buttons! This is what they'll see.</p>
-            </div>
+          <motion.div key="preview" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="max-w-lg mx-auto px-6 py-12">
+            <p className="font-mono-label text-muted-foreground text-center mb-8">Preview — try clicking the buttons</p>
             <CardPreview card={card} interactive />
-            <div className="flex items-center gap-4 mt-8 justify-center">
-              <Button variant="outline" size="lg" className="rounded-full px-8" onClick={() => setShowPreview(false)}>Go Back & Edit</Button>
-              <Button size="lg" className="rounded-full px-8 bg-gradient-to-r from-primary to-[hsl(var(--sm-lavender))] text-primary-foreground animate-glow" onClick={handleSaveAndShare}>Save & Share 💌</Button>
+            <div className="flex items-center gap-4 mt-10 justify-center">
+              <Button variant="outline" className="rounded-full px-8" onClick={() => setShowPreview(false)}>Edit</Button>
+              <Button className="rounded-full px-8 bg-foreground text-background" onClick={() => setShowPlanDialog(true)}>Save & share</Button>
             </div>
           </motion.div>
         )}
@@ -222,25 +160,28 @@ const CreateCard = () => {
   );
 };
 
-/* Reusable accordion section */
-const AccordionSection = ({ id, icon, title, isOpen, onToggle, children }: { id: string; icon: React.ReactNode; title: string; isOpen: boolean; onToggle: () => void; children: React.ReactNode }) => (
-  <div className="glass-strong rounded-3xl overflow-hidden shadow-sm">
+const Section = ({ title, isOpen, onToggle, children }: { title: string; isOpen: boolean; onToggle: () => void; children: React.ReactNode }) => (
+  <div className="border border-border rounded-lg overflow-hidden">
     <button onClick={onToggle} className="w-full flex items-center justify-between p-5 hover:bg-muted/30 transition-colors">
-      <div className="flex items-center gap-3">
-        {icon}
-        <span className="font-display text-lg font-semibold text-foreground">{title}</span>
-      </div>
+      <span className="font-medium text-sm">{title}</span>
       <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
-        <ChevronDown className="w-5 h-5 text-muted-foreground" />
+        <ChevronDown className="w-4 h-4 text-muted-foreground" />
       </motion.div>
     </button>
     <AnimatePresence initial={false}>
       {isOpen && (
-        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25, ease: 'easeInOut' }} className="overflow-hidden">
+        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
           <div className="px-5 pb-5">{children}</div>
         </motion.div>
       )}
     </AnimatePresence>
+  </div>
+);
+
+const Field = ({ label, children }: { label: string; children: React.ReactNode }) => (
+  <div>
+    <label className="font-mono-label text-muted-foreground block mb-2">{label}</label>
+    {children}
   </div>
 );
 

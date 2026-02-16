@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Sparkles, Check } from 'lucide-react';
+import { ArrowLeft, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
 import {
   FLOWERS,
   WRAPPING_PATTERNS,
@@ -34,20 +33,12 @@ const BouquetCreate = () => {
 
   const selectedFlowers = FLOWERS.filter((f) => bouquet.flowers.includes(f.id));
 
-  const handleSave = () => setShowPlanDialog(true);
-
   const handlePlanSelect = (plan: PlanType) => {
-    localStorage.setItem(
-      'pendingCard',
-      JSON.stringify({
-        productType: 'bouquet',
-        bouquetData: bouquet,
-        recipientName,
-        senderName,
-        question: `A bouquet for ${recipientName || 'you'}`,
-        yesMessage: bouquet.messageText || 'Enjoy these flowers! 💐',
-      })
-    );
+    localStorage.setItem('pendingCard', JSON.stringify({
+      productType: 'bouquet', bouquetData: bouquet, recipientName, senderName,
+      question: `A bouquet for ${recipientName || 'you'}`,
+      yesMessage: bouquet.messageText || 'Enjoy these flowers!',
+    }));
     localStorage.setItem('pendingPlan', plan);
     localStorage.setItem('pendingProductType', 'bouquet');
     setShowPlanDialog(false);
@@ -55,89 +46,69 @@ const BouquetCreate = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[hsl(var(--sm-cream))] to-[hsl(var(--sm-peach))] relative overflow-hidden">
-      {/* Floating petals */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute text-2xl opacity-[0.08]"
-            style={{ left: `${10 + i * 12}%` }}
-            animate={{ y: ['-5%', '105%'] }}
-            transition={{ duration: 12 + Math.random() * 6, repeat: Infinity, delay: i * 1.5, ease: 'linear' }}
-          >
-            🌸
-          </motion.div>
-        ))}
-      </div>
-
+    <div className="min-h-screen bg-background relative texture-grain">
       {/* Header */}
-      <header className="py-3 px-6 border-b border-border/50 glass-strong sticky top-0 z-20">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <button onClick={() => navigate('/')} className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
+      <header className="sticky top-0 z-20 bg-background/90 backdrop-blur-sm border-b border-border">
+        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+          <button onClick={() => navigate('/')} className="flex items-center gap-3 text-foreground hover:text-warm-wine transition-colors">
             <ArrowLeft className="w-4 h-4" />
-            <span className="font-display text-lg font-bold">Digital Bouquet</span>
-            <span className="text-lg">💐</span>
+            <span className="font-mono-label">Bouquets</span>
           </button>
+          <span className="font-display text-sm text-muted-foreground italic">Digital Bouquet</span>
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-4 py-8 relative z-10">
-        <div className="text-center mb-8">
-          <h1 className="font-display text-3xl md:text-4xl font-bold mb-2">Build Your Bouquet</h1>
-          <p className="text-muted-foreground">Pick flowers, customize, and send a blooming surprise</p>
+      <div className="max-w-5xl mx-auto px-6 py-12">
+        <div className="mb-12">
+          <p className="font-mono-label text-muted-foreground mb-3">Build</p>
+          <h1 className="font-display text-4xl md:text-5xl font-bold tracking-tight">
+            Your bouquet
+          </h1>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Left: Controls */}
-          <div className="space-y-6">
+        <div className="grid lg:grid-cols-[1fr,400px] gap-12">
+          {/* Controls */}
+          <div className="space-y-8">
             {/* Names */}
-            <div className="glass-strong rounded-3xl p-5 space-y-4">
-              <h3 className="font-display text-lg font-semibold">Names</h3>
-              <Input value={recipientName} onChange={(e) => setRecipientName(e.target.value)} placeholder="Their name" maxLength={50} />
-              <Input value={senderName} onChange={(e) => setSenderName(e.target.value)} placeholder="Your name" maxLength={50} />
+            <div>
+              <p className="font-mono-label text-muted-foreground mb-4">Recipients</p>
+              <div className="grid grid-cols-2 gap-3">
+                <Input value={recipientName} onChange={(e) => setRecipientName(e.target.value)} placeholder="Their name" maxLength={50} className="bg-transparent" />
+                <Input value={senderName} onChange={(e) => setSenderName(e.target.value)} placeholder="Your name" maxLength={50} className="bg-transparent" />
+              </div>
             </div>
 
-            {/* Flower selection */}
-            <div className="glass-strong rounded-3xl p-5">
-              <h3 className="font-display text-lg font-semibold mb-3">Choose Flowers</h3>
-              <div className="grid grid-cols-3 gap-3">
+            {/* Flowers */}
+            <div>
+              <p className="font-mono-label text-muted-foreground mb-4">Choose flowers</p>
+              <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
                 {FLOWERS.map((flower) => {
                   const selected = bouquet.flowers.includes(flower.id);
                   return (
-                    <motion.button
+                    <button
                       key={flower.id}
-                      whileTap={{ scale: 0.95 }}
                       onClick={() => toggleFlower(flower.id)}
-                      className={`relative p-3 rounded-2xl border-2 text-center transition-all ${
-                        selected ? 'border-primary bg-primary/5 shadow-md' : 'border-border hover:border-primary/30'
-                      }`}
+                      className={`relative p-3 rounded-lg border text-center transition-all ${selected ? 'border-foreground bg-foreground/[0.03]' : 'border-border hover:border-foreground/20'}`}
                     >
-                      {flower.premium && (
-                        <Badge className="absolute -top-1.5 -right-1.5 bg-gradient-to-r from-[hsl(var(--sm-gold))] to-amber-400 text-foreground border-0 text-[9px] px-1.5 py-0 shadow-sm z-10">
-                          Premium
-                        </Badge>
-                      )}
-                      <span className="text-3xl block">{flower.emoji}</span>
-                      <div className="text-xs text-muted-foreground mt-1">{flower.name}</div>
-                      {selected && <Check className="w-3.5 h-3.5 text-primary mx-auto mt-1" />}
-                    </motion.button>
+                      {flower.premium && <span className="absolute -top-1 -right-1 font-mono-label text-[8px] bg-warm-gold text-white px-1 py-0.5 rounded">PRO</span>}
+                      <span className="text-2xl block">{flower.emoji}</span>
+                      <div className="text-[10px] text-muted-foreground mt-1">{flower.name}</div>
+                      {selected && <Check className="w-3 h-3 text-foreground mx-auto mt-1" />}
+                    </button>
                   );
                 })}
               </div>
             </div>
 
             {/* Wrapping */}
-            <div className="glass-strong rounded-3xl p-5">
-              <h3 className="font-display text-lg font-semibold mb-3">Wrapping Paper</h3>
-              <div className="grid grid-cols-5 gap-2">
+            <div>
+              <p className="font-mono-label text-muted-foreground mb-4">Wrapping</p>
+              <div className="flex gap-2">
                 {WRAPPING_PATTERNS.map((wp) => (
                   <button
                     key={wp.id}
                     onClick={() => setBouquet((p) => ({ ...p, wrappingPattern: wp.id }))}
-                    className={`h-14 rounded-xl border-2 transition-all ${wp.preview} ${
-                      bouquet.wrappingPattern === wp.id ? 'border-primary ring-2 ring-primary/20' : 'border-border'
-                    }`}
+                    className={`h-14 w-14 rounded-lg border transition-all ${wp.preview} ${bouquet.wrappingPattern === wp.id ? 'border-foreground ring-1 ring-foreground/20' : 'border-border'}`}
                     title={wp.name}
                   />
                 ))}
@@ -145,56 +116,54 @@ const BouquetCreate = () => {
             </div>
 
             {/* Bow */}
-            <div className="glass-strong rounded-3xl p-5">
-              <h3 className="font-display text-lg font-semibold mb-3">Bow Style</h3>
-              <div className="flex gap-3">
+            <div>
+              <p className="font-mono-label text-muted-foreground mb-4">Bow style</p>
+              <div className="flex gap-2">
                 {BOW_STYLES.map((bow) => (
                   <button
                     key={bow.id}
                     onClick={() => setBouquet((p) => ({ ...p, bowStyle: bow.id }))}
-                    className={`flex-1 p-3 rounded-2xl border-2 text-center transition-all ${
-                      bouquet.bowStyle === bow.id ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/30'
-                    }`}
+                    className={`px-5 py-3 rounded-lg border text-center transition-all ${bouquet.bowStyle === bow.id ? 'border-foreground bg-foreground/[0.03]' : 'border-border hover:border-foreground/20'}`}
                   >
-                    <span className="text-2xl block">{bow.emoji}</span>
-                    <span className="text-xs text-muted-foreground">{bow.name}</span>
+                    <span className="text-lg block">{bow.emoji}</span>
+                    <span className="text-[10px] text-muted-foreground">{bow.name}</span>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Message card */}
-            <div className="glass-strong rounded-3xl p-5 space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="font-display text-lg font-semibold">Message Card</h3>
+            {/* Message */}
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <p className="font-mono-label text-muted-foreground">Message card</p>
                 <button
                   onClick={() => setBouquet((p) => ({ ...p, messageCard: !p.messageCard }))}
-                  className={`w-11 h-6 rounded-full transition-colors relative ${bouquet.messageCard ? 'bg-primary' : 'bg-muted'}`}
+                  className={`w-10 h-5 rounded-full transition-colors relative ${bouquet.messageCard ? 'bg-foreground' : 'bg-border'}`}
                 >
-                  <div className={`w-5 h-5 bg-white rounded-full shadow-sm absolute top-0.5 transition-all ${bouquet.messageCard ? 'left-[22px]' : 'left-0.5'}`} />
+                  <div className={`w-4 h-4 bg-white rounded-full shadow-sm absolute top-0.5 transition-all ${bouquet.messageCard ? 'left-[22px]' : 'left-0.5'}`} />
                 </button>
               </div>
               {bouquet.messageCard && (
                 <Textarea
                   value={bouquet.messageText}
                   onChange={(e) => setBouquet((p) => ({ ...p, messageText: e.target.value }))}
-                  placeholder="Write a heartfelt message..."
+                  placeholder="Write something beautiful..."
                   rows={3}
                   maxLength={200}
+                  className="bg-transparent"
                 />
               )}
             </div>
           </div>
 
-          {/* Right: Preview */}
-          <div className="lg:sticky lg:top-20 lg:self-start">
-            <div className="glass-strong rounded-3xl p-8 min-h-[400px] flex flex-col items-center justify-center">
-              <h3 className="font-display text-lg font-semibold mb-6 text-center">Your Bouquet</h3>
+          {/* Preview */}
+          <div className="lg:sticky lg:top-24 lg:self-start">
+            <div className="surface-elevated rounded-lg border border-border p-8 min-h-[420px] flex flex-col items-center justify-center relative">
+              <p className="font-mono-label text-muted-foreground absolute top-4 left-4">Preview</p>
 
-              {/* Vase */}
-              <div className="relative w-64 h-72 flex flex-col items-center justify-end">
+              <div className="relative w-56 h-64 flex flex-col items-center justify-end mt-8">
                 {/* Flowers */}
-                <div className="absolute bottom-20 flex flex-wrap items-end justify-center gap-1 px-4 max-w-[200px]">
+                <div className="absolute bottom-20 flex flex-wrap items-end justify-center gap-0.5 px-2 max-w-[180px]">
                   <AnimatePresence>
                     {selectedFlowers.map((flower, i) => (
                       <motion.span
@@ -202,9 +171,9 @@ const BouquetCreate = () => {
                         initial={{ scale: 0, y: 20 }}
                         animate={{ scale: 1, y: 0 }}
                         exit={{ scale: 0, y: 20 }}
-                        transition={{ type: 'spring', delay: i * 0.05 }}
-                        className="text-4xl"
-                        style={{ transform: `rotate(${(i - selectedFlowers.length / 2) * 8}deg)` }}
+                        transition={{ type: 'spring', delay: i * 0.04 }}
+                        className="text-3xl"
+                        style={{ transform: `rotate(${(i - selectedFlowers.length / 2) * 10}deg)` }}
                       >
                         {flower.emoji}
                       </motion.span>
@@ -213,39 +182,33 @@ const BouquetCreate = () => {
                 </div>
 
                 {/* Bow */}
-                <div className="absolute bottom-[72px] z-10 text-2xl">
+                <div className="absolute bottom-[68px] z-10 text-xl">
                   {BOW_STYLES.find((b) => b.id === bouquet.bowStyle)?.emoji}
                 </div>
 
-                {/* Vase shape */}
-                <div className="w-28 h-24 bg-gradient-to-b from-[hsl(var(--sm-lavender))]/40 to-[hsl(var(--sm-lavender))]/60 rounded-b-[40px] rounded-t-lg border border-[hsl(var(--sm-lavender))]/30 backdrop-blur-sm" />
+                {/* Vase */}
+                <div className="w-24 h-20 bg-warm-cream rounded-b-[36px] rounded-t-md border border-border/60" />
               </div>
 
               {selectedFlowers.length === 0 && (
-                <p className="text-sm text-muted-foreground mt-4">Select flowers to fill your bouquet</p>
+                <p className="text-xs text-muted-foreground mt-4">Select flowers above</p>
               )}
 
               {bouquet.messageCard && bouquet.messageText && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-6 bg-white/80 rounded-2xl p-4 max-w-[220px] text-center shadow-sm border border-border/50"
-                >
-                  <p className="text-sm italic text-muted-foreground">{bouquet.messageText}</p>
-                  {senderName && <p className="text-xs text-primary mt-2 font-medium">— {senderName}</p>}
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-6 border border-border rounded-lg p-4 max-w-[200px] text-center">
+                  <p className="text-xs italic text-muted-foreground leading-relaxed">{bouquet.messageText}</p>
+                  {senderName && <p className="text-[10px] text-warm-wine mt-2 font-medium">— {senderName}</p>}
                 </motion.div>
               )}
             </div>
 
-            {/* Save button */}
             <div className="mt-6 text-center">
               <Button
-                onClick={handleSave}
+                onClick={() => setShowPlanDialog(true)}
                 disabled={selectedFlowers.length === 0}
-                size="lg"
-                className="rounded-full text-lg px-10 py-6 animate-glow bg-gradient-to-r from-primary to-[hsl(var(--sm-peach))]"
+                className="rounded-full px-10 py-6 bg-foreground text-background hover:bg-foreground/90 w-full"
               >
-                <Sparkles className="w-5 h-5 mr-2" /> Send Bouquet 💐
+                Send bouquet
               </Button>
             </div>
           </div>
