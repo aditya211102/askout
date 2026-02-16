@@ -56,7 +56,7 @@ Deno.serve(async (req: Request) => {
       },
       body: JSON.stringify({
         product_cart: [{ product_id: productId, quantity: 1 }],
-        success_url: redirectUrl || undefined,
+        return_url: redirectUrl || undefined,
         metadata: { card_id: cardId },
       }),
     });
