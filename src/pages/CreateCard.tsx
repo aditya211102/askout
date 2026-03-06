@@ -145,7 +145,7 @@ const CreateCard = () => {
             <CardPreview card={card} interactive />
             <div className="flex items-center gap-4 mt-10 justify-center">
               <Button variant="outline" className="rounded-full px-8" onClick={() => setShowPreview(false)}>Edit</Button>
-              <Button className="rounded-full px-8 bg-foreground text-background" onClick={() => setShowPlanDialog(true)}>Save & share — $2.99</Button>
+              <Button className="rounded-full px-8 bg-foreground text-background" onClick={() => setShowPlanDialog(true)}>Save & share — $1.99</Button>
             </div>
           </motion.div>
         )}

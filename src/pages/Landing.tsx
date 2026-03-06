@@ -11,7 +11,7 @@ const products = [
     label: "CARDS",
     number: "01",
     description: "A playful card with a trick \"No\" button. They literally can't say no.",
-    price: "$2.99",
+    price: "$1.99",
     route: "/askout/create",
     preview: (
       <div className="w-full h-full bg-gradient-to-br from-rose-100 to-pink-200 rounded-lg flex items-center justify-center p-6">
@@ -30,7 +30,7 @@ const products = [
     label: "BOUQUETS",
     number: "02",
     description: "Handpick watercolor blooms and wrap them into a bouquet that unfolds on screen.",
-    price: "$2.99",
+    price: "$1.99",
     route: "/bouquet/create",
     preview: (
       <div className="w-full h-full bg-[hsl(40,33%,97%)] rounded-lg flex items-center justify-center p-4">
@@ -47,7 +47,7 @@ const products = [
     label: "VOICE",
     number: "03",
     description: "Record a heartfelt message. Delivered on a warm journal with a waveform.",
-    price: "$2.99",
+    price: "$1.99",
     route: "/voice/create",
     preview: (
       <div className="w-full h-full bg-[hsl(30,20%,18%)] rounded-lg flex flex-col items-center justify-center p-4">
@@ -78,10 +78,7 @@ const Landing = () => {
     <div className="min-h-screen bg-background relative texture-grain">
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-5">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <span className="font-display text-lg font-semibold tracking-tight text-foreground">
-            ShareMoments
-          </span>
+        <div className="max-w-6xl mx-auto flex items-center justify-end">
           <div className="flex items-center gap-4">
             {loggedIn && (
               <button
@@ -123,7 +120,7 @@ const Landing = () => {
             moments
           </h1>
           <p className="text-muted-foreground text-lg md:text-xl max-w-xl mx-auto leading-relaxed mb-12">
-            Three ways to say what matters. Crafted with intention, 
+            Three ways to say what matters. Crafted with intention,
             delivered with delight.
           </p>
           <Button
@@ -143,15 +140,6 @@ const Landing = () => {
 
       {/* Products with Previews */}
       <section id="products" className="max-w-6xl mx-auto px-6 py-24 scroll-mt-8">
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="font-mono-label text-muted-foreground mb-16"
-        >
-          Three products — $2.99 each
-        </motion.p>
-
         <div className="grid md:grid-cols-3 gap-6">
           {products.map((product, i) => (
             <motion.div
@@ -195,7 +183,7 @@ const Landing = () => {
         <div className="grid md:grid-cols-3 gap-16">
           {[
             { num: "01", title: "Choose & customize", body: "Pick a product and personalize every detail to make it yours." },
-            { num: "02", title: "Quick checkout", body: "Secure payment at $2.99. No subscriptions, ever." },
+            { num: "02", title: "Quick checkout", body: "Secure payment at $1.99. No subscriptions, ever." },
             { num: "03", title: "Share the link", body: "Send it to someone special and watch the magic unfold." },
           ].map((step, i) => (
             <motion.div

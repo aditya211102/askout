@@ -31,7 +31,7 @@ const PlanDialog = ({ open, onClose, onSelect }: PlanDialogProps) => {
       <DialogContent className="sm:max-w-sm rounded-lg p-0 overflow-hidden border-border">
         <DialogHeader className="p-6 pb-4">
           <p className="font-mono-label text-muted-foreground text-center mb-1">One-time</p>
-          <DialogTitle className="font-display text-3xl text-center font-bold">$2.99</DialogTitle>
+          <DialogTitle className="font-display text-3xl text-center font-bold">$1.99</DialogTitle>
           <DialogDescription className="text-center text-sm mt-1">
             No subscriptions. Pay once, share forever.
           </DialogDescription>

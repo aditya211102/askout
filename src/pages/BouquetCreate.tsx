@@ -78,18 +78,16 @@ const BouquetCreate = () => {
                 onClick={() => toggleFlower(flower.id)}
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.95 }}
-                className={`relative aspect-square rounded-full flex items-center justify-center transition-all duration-300 ${
-                  selected
+                className={`relative aspect-square rounded-full flex items-center justify-center transition-all duration-300 ${selected
                     ? 'ring-2 ring-foreground ring-offset-4 ring-offset-background'
                     : 'hover:ring-1 hover:ring-foreground/20 hover:ring-offset-2 hover:ring-offset-background'
-                }`}
+                  }`}
               >
                 <img
                   src={flower.image}
                   alt={flower.name}
-                  className={`w-full h-full object-contain p-1 transition-all duration-300 ${
-                    selected ? 'drop-shadow-lg' : 'opacity-80 hover:opacity-100'
-                  }`}
+                  className={`w-full h-full object-contain p-1 transition-all duration-300 ${selected ? 'drop-shadow-lg' : 'opacity-80 hover:opacity-100'
+                    }`}
                 />
                 {selected && (
                   <motion.div
@@ -207,7 +205,7 @@ const BouquetCreate = () => {
                 disabled={selectedFlowers.length < 3}
                 className="rounded-full px-10 py-6 bg-foreground text-background hover:bg-foreground/90 w-full"
               >
-                Send bouquet — $2.99
+                Send bouquet — $1.99
               </Button>
             </div>
           </div>
