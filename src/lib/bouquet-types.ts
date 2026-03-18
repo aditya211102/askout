@@ -12,6 +12,8 @@ export interface BouquetConfig {
   messageText: string;
   wrappingPattern: string;
   bowStyle: string;
+  arrangementStyle: 'classic' | 'tight' | 'wild';
+  greeneryStyle: 'none' | 'eucalyptus' | 'ferns' | 'mixed';
 }
 
 export const FLOWERS: FlowerType[] = [
@@ -35,6 +37,7 @@ export const WRAPPING_PATTERNS = [
   { id: 'sage', name: 'Sage', preview: 'bg-gradient-to-b from-[hsl(90,12%,82%)] to-[hsl(90,12%,72%)]' },
   { id: 'blush', name: 'Blush', preview: 'bg-gradient-to-b from-[hsl(8,35%,90%)] to-[hsl(8,35%,85%)]' },
   { id: 'charcoal', name: 'Charcoal', preview: 'bg-gradient-to-b from-neutral-700 to-neutral-800' },
+  { id: 'none', name: 'None', preview: 'bg-transparent border-0 shadow-none' },
 ];
 
 export const BOW_STYLES = [
@@ -50,4 +53,6 @@ export const DEFAULT_BOUQUET: BouquetConfig = {
   messageText: '',
   wrappingPattern: 'kraft',
   bowStyle: 'classic',
+  arrangementStyle: 'tight',
+  greeneryStyle: 'mixed',
 };

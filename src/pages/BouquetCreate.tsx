@@ -24,15 +24,30 @@ const BouquetCreate = () => {
   const [showPlanDialog, setShowPlanDialog] = useState(false);
 
   const toggleFlower = (id: string) => {
+    setBouquet((prev) => {
+      // If we already have 10 flowers, don't add more (unless we're removing one)
+      const count = prev.flowers.filter(f => f === id).length;
+
+      // We'll add a new one if we're under 10
+      if (prev.flowers.length < 10) {
+        return {
+          ...prev,
+          flowers: [...prev.flowers, id],
+        };
+      }
+      return prev;
+    });
+  };
+
+  const removeFlower = (indexToRemove: number) => {
     setBouquet((prev) => ({
       ...prev,
-      flowers: prev.flowers.includes(id)
-        ? prev.flowers.filter((f) => f !== id)
-        : prev.flowers.length < 10 ? [...prev.flowers, id] : prev.flowers,
+      flowers: prev.flowers.filter((_, i) => i !== indexToRemove)
     }));
   };
 
-  const selectedFlowers = FLOWERS.filter((f) => bouquet.flowers.includes(f.id));
+  // We need to map the selected IDs back to the actual flower objects
+  const selectedFlowers = bouquet.flowers.map(id => FLOWERS.find(f => f.id === id)!).filter(Boolean);
 
   const handlePlanSelect = (plan: PlanType) => {
     localStorage.setItem('pendingCard', JSON.stringify({
@@ -71,34 +86,34 @@ const BouquetCreate = () => {
         {/* Flower Grid - Digibouquet inspired */}
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 md:gap-6 mb-16 max-w-3xl mx-auto">
           {FLOWERS.map((flower) => {
-            const selected = bouquet.flowers.includes(flower.id);
+            const count = bouquet.flowers.filter(id => id === flower.id).length;
             return (
               <motion.button
                 key={flower.id}
                 onClick={() => toggleFlower(flower.id)}
-                whileHover={{ scale: 1.08 }}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`relative aspect-square rounded-full flex items-center justify-center transition-all duration-300 ${selected
-                    ? 'ring-2 ring-foreground ring-offset-4 ring-offset-background'
-                    : 'hover:ring-1 hover:ring-foreground/20 hover:ring-offset-2 hover:ring-offset-background'
+                className={`relative aspect-square rounded-full flex items-center justify-center transition-all duration-300 ${count > 0
+                  ? 'ring-2 ring-foreground ring-offset-4 ring-offset-background'
+                  : 'hover:ring-1 hover:ring-foreground/20 hover:ring-offset-2 hover:ring-offset-background'
                   }`}
               >
                 <img
                   src={flower.image}
                   alt={flower.name}
-                  className={`w-full h-full object-contain p-1 transition-all duration-300 ${selected ? 'drop-shadow-lg' : 'opacity-80 hover:opacity-100'
+                  className={`w-full h-full object-contain p-2 transition-all duration-300 ${count > 0 ? '' : 'opacity-80 hover:opacity-100'
                     }`}
                 />
-                {selected && (
+                {count > 0 && (
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-foreground flex items-center justify-center"
+                    className="absolute -top-1 -right-1 min-w-5 h-5 px-1.5 rounded-full bg-foreground flex items-center justify-center"
                   >
-                    <Check className="w-3 h-3 text-background" />
+                    <span className="text-[10px] font-bold text-background leading-none">{count}</span>
                   </motion.div>
                 )}
-                <span className="absolute -bottom-5 font-mono-label text-muted-foreground whitespace-nowrap">
+                <span className="absolute -bottom-6 font-mono-label text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
                   {flower.name}
                 </span>
               </motion.button>
@@ -188,7 +203,32 @@ const BouquetCreate = () => {
 
           {/* Preview */}
           <div className="lg:sticky lg:top-24 lg:self-start">
-            <div className="surface-elevated rounded-lg border border-border p-8 min-h-[460px] flex flex-col items-center justify-center relative overflow-hidden">
+            <div className="text-center mb-6">
+              <p className="font-mono-label text-muted-foreground mb-3">CUSTOMIZE YOUR BOUQUET</p>
+              <div className="flex flex-col gap-2 items-center">
+                <Button
+                  onClick={() => {
+                    const styles: ('classic' | 'tight' | 'wild')[] = ['classic', 'tight', 'wild'];
+                    setBouquet(prev => ({ ...prev, arrangementStyle: styles[(styles.indexOf(prev.arrangementStyle) + 1) % styles.length] }))
+                  }}
+                  className="rounded-none bg-foreground text-background hover:bg-foreground/90 font-mono-label text-xs tracking-wider px-6"
+                >
+                  TRY A NEW ARRANGEMENT
+                </Button>
+                <Button
+                  onClick={() => {
+                    const styles: ('none' | 'eucalyptus' | 'ferns' | 'mixed')[] = ['none', 'eucalyptus', 'ferns', 'mixed'];
+                    setBouquet(prev => ({ ...prev, greeneryStyle: styles[(styles.indexOf(prev.greeneryStyle) + 1) % styles.length] }))
+                  }}
+                  variant="outline"
+                  className="rounded-none border-foreground text-foreground hover:bg-foreground/5 font-mono-label text-xs tracking-wider px-6"
+                >
+                  CHANGE GREENERY
+                </Button>
+              </div>
+            </div>
+
+            <div className="surface-elevated rounded-lg border border-border p-6 min-h-[460px] flex flex-col items-center justify-center relative overflow-hidden">
               <p className="font-mono-label text-muted-foreground absolute top-4 left-4">Preview</p>
               <div className="mt-6">
                 <BouquetPreview
