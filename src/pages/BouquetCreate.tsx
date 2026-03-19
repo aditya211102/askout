@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft, Check, Shuffle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -11,10 +11,46 @@ import {
   BOW_STYLES,
   DEFAULT_BOUQUET,
   type BouquetConfig,
+  type PlacedFlower
 } from '@/lib/bouquet-types';
 import type { PlanType } from '@/components/PlanDialog';
 import PlanDialog from '@/components/PlanDialog';
 import BouquetPreview from '@/components/BouquetPreview';
+
+const SMART_POSITIONS = [
+  { x: 0, y: -62, rotation: 0, scale: 1.08 },
+  { x: -44, y: -34, rotation: -12, scale: 1.02 },
+  { x: 44, y: -34, rotation: 12, scale: 1.02 },
+  { x: -76, y: -2, rotation: -20, scale: 0.98 },
+  { x: 76, y: -2, rotation: 20, scale: 0.98 },
+  { x: -26, y: 8, rotation: -8, scale: 0.96 },
+  { x: 26, y: 8, rotation: 8, scale: 0.96 },
+  { x: -56, y: 30, rotation: -14, scale: 0.94 },
+  { x: 56, y: 30, rotation: 14, scale: 0.94 },
+  { x: 0, y: 36, rotation: 0, scale: 0.92 },
+];
+
+const createSmartFlowerPlacement = (count: number): Pick<PlacedFlower, 'x' | 'y' | 'rotation' | 'scale'> => {
+  const base = SMART_POSITIONS[count % SMART_POSITIONS.length];
+  const ring = Math.floor(count / SMART_POSITIONS.length);
+  const xOffset = (Math.random() - 0.5) * (12 + ring * 6);
+  const yOffset = (Math.random() - 0.5) * (10 + ring * 4);
+  const rotationOffset = (Math.random() - 0.5) * 8;
+
+  return {
+    x: base.x + xOffset,
+    y: base.y + yOffset + ring * 8,
+    rotation: base.rotation + rotationOffset,
+    scale: Math.max(0.88, Math.min(1.12, base.scale + (Math.random() - 0.5) * 0.06)),
+  };
+};
+
+const GREENERY_OPTIONS: Array<{ id: BouquetConfig['greeneryStyle']; label: string; description: string }> = [
+  { id: 'mixed', label: 'Mixed', description: 'Balanced and lush' },
+  { id: 'eucalyptus', label: 'Eucalyptus', description: 'Soft rounded leaves' },
+  { id: 'ferns', label: 'Fern', description: 'Airy structured texture' },
+  { id: 'none', label: 'None', description: 'Flowers only' },
+];
 
 const BouquetCreate = () => {
   const navigate = useNavigate();
@@ -23,31 +59,90 @@ const BouquetCreate = () => {
   const [senderName, setSenderName] = useState('');
   const [showPlanDialog, setShowPlanDialog] = useState(false);
 
-  const toggleFlower = (id: string) => {
+  const addFlower = (flowerId: string) => {
     setBouquet((prev) => {
-      // If we already have 10 flowers, don't add more (unless we're removing one)
-      const count = prev.flowers.filter(f => f === id).length;
+      // Allow up to 20 placed flowers in the canvas
+      if (prev.placedFlowers.length >= 20) return prev;
 
-      // We'll add a new one if we're under 10
-      if (prev.flowers.length < 10) {
-        return {
-          ...prev,
-          flowers: [...prev.flowers, id],
-        };
-      }
-      return prev;
+      const placement = createSmartFlowerPlacement(prev.placedFlowers.length);
+      const newFlower: PlacedFlower = {
+        id: crypto.randomUUID(),
+        flowerId,
+        x: placement.x,
+        y: placement.y,
+        rotation: placement.rotation,
+        scale: placement.scale,
+        zIndex: prev.placedFlowers.length + 10,
+      };
+
+      return {
+        ...prev,
+        placedFlowers: [...prev.placedFlowers, newFlower],
+      };
     });
   };
 
-  const removeFlower = (indexToRemove: number) => {
+  const removeFlower = (id: string) => {
     setBouquet((prev) => ({
       ...prev,
-      flowers: prev.flowers.filter((_, i) => i !== indexToRemove)
+      placedFlowers: prev.placedFlowers.filter(f => f.id !== id)
     }));
   };
 
-  // We need to map the selected IDs back to the actual flower objects
-  const selectedFlowers = bouquet.flowers.map(id => FLOWERS.find(f => f.id === id)!).filter(Boolean);
+  const updateFlower = (id: string, updates: Partial<PlacedFlower>) => {
+    setBouquet((prev) => ({
+      ...prev,
+      placedFlowers: prev.placedFlowers.map(f => f.id === id ? { ...f, ...updates } : f)
+    }));
+  };
+
+  const moveFlowerLayer = (id: string, direction: 'forward' | 'backward') => {
+    setBouquet((prev) => {
+      const ordered = [...prev.placedFlowers].sort((a, b) => a.zIndex - b.zIndex);
+      const index = ordered.findIndex((flower) => flower.id === id);
+      if (index === -1) return prev;
+
+      const targetIndex = direction === 'forward'
+        ? Math.min(ordered.length - 1, index + 1)
+        : Math.max(0, index - 1);
+
+      if (targetIndex === index) return prev;
+
+      const [flower] = ordered.splice(index, 1);
+      ordered.splice(targetIndex, 0, flower);
+
+      const normalized = ordered.map((item, normalizedIndex) => ({
+        ...item,
+        zIndex: normalizedIndex + 10,
+      }));
+
+      return { ...prev, placedFlowers: normalized };
+    });
+  };
+
+  const randomizeArrangement = () => {
+    setBouquet((prev) => {
+      const shuffled = [...prev.placedFlowers]
+        .map((flower) => ({ flower, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ flower }, index) => {
+          const placement = createSmartFlowerPlacement(index);
+          return {
+            ...flower,
+            x: placement.x,
+            y: placement.y,
+            rotation: placement.rotation,
+            scale: placement.scale,
+            zIndex: index + 10,
+          };
+        });
+
+      return {
+        ...prev,
+        placedFlowers: shuffled,
+      };
+    });
+  };
 
   const handlePlanSelect = (plan: PlanType) => {
     localStorage.setItem('pendingCard', JSON.stringify({
@@ -62,95 +157,86 @@ const BouquetCreate = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background relative texture-grain">
+    <div className="min-h-screen bg-[#faf9f7] relative texture-grain">
       {/* Header */}
-      <header className="sticky top-0 z-20 bg-background/90 backdrop-blur-sm border-b border-border">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-20 bg-[#faf9f7]/90 backdrop-blur-md border-b border-border/50">
+        <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
           <button onClick={() => navigate('/')} className="flex items-center gap-3 text-foreground hover:text-warm-wine transition-colors">
             <ArrowLeft className="w-4 h-4" />
             <span className="font-mono-label">Back</span>
           </button>
-          <span className="font-display text-sm text-muted-foreground italic">Digital Bouquet</span>
+          <span className="font-display text-sm text-muted-foreground italic tracking-wide">The Digital Atelier</span>
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto px-6 py-12">
+      <div className="max-w-6xl mx-auto px-6 py-12">
         {/* Title */}
-        <div className="text-center mb-16">
-          <p className="font-mono-label text-muted-foreground mb-4">Pick 3 to 10 blooms</p>
-          <h1 className="font-display text-4xl md:text-6xl font-bold tracking-tight italic">
+        <div className="text-center mb-12">
+          <h1 className="font-display text-4xl md:text-6xl font-bold tracking-tight italic text-foreground">
             Build your bouquet
           </h1>
         </div>
 
-        {/* Flower Grid - Digibouquet inspired */}
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 md:gap-6 mb-16 max-w-3xl mx-auto">
+        {/* Flower Grid - Exact match of screenshot */}
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-y-16 gap-x-4 max-w-3xl mx-auto mb-16 pt-6">
           {FLOWERS.map((flower) => {
-            const count = bouquet.flowers.filter(id => id === flower.id).length;
+            const count = bouquet.placedFlowers.filter(f => f.flowerId === flower.id).length;
+            const isSelected = count > 0;
             return (
               <motion.button
                 key={flower.id}
-                onClick={() => toggleFlower(flower.id)}
+                onClick={() => addFlower(flower.id)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`relative aspect-square rounded-full flex items-center justify-center transition-all duration-300 ${count > 0
-                  ? 'ring-2 ring-foreground ring-offset-4 ring-offset-background'
-                  : 'hover:ring-1 hover:ring-foreground/20 hover:ring-offset-2 hover:ring-offset-background'
-                  }`}
+                className={`relative aspect-square flex items-center justify-center rounded-full transition-all duration-500 mx-auto w-24 h-24 ${isSelected ? 'ring-[1px] ring-foreground/20 ring-offset-2' : ''}`}
               >
                 <img
                   src={flower.image}
                   alt={flower.name}
-                  className={`w-full h-full object-contain p-2 transition-all duration-300 ${count > 0 ? '' : 'opacity-80 hover:opacity-100'
-                    }`}
+                  className={`w-full h-full object-contain transition-all duration-300 ${isSelected ? 'opacity-100 scale-105' : 'opacity-90 hover:opacity-100'}`}
                 />
-                {count > 0 && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-1 min-w-5 h-5 px-1.5 rounded-full bg-foreground flex items-center justify-center"
-                  >
-                    <span className="text-[10px] font-bold text-background leading-none">{count}</span>
-                  </motion.div>
-                )}
-                <span className="absolute -bottom-6 font-mono-label text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
+                <span className="absolute -bottom-8 font-mono-label text-[10px] text-muted-foreground whitespace-nowrap uppercase tracking-widest">
                   {flower.name}
                 </span>
+                {isSelected && count > 1 && (
+                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-foreground text-background rounded-full text-[10px] flex items-center justify-center font-bold">
+                    {count}
+                  </div>
+                )}
               </motion.button>
             );
           })}
         </div>
 
         {/* Counter */}
-        <div className="text-center mb-12">
-          <span className="font-mono-label text-muted-foreground">
-            {selectedFlowers.length} / 10 selected
+        <div className="text-center mb-16 border-b border-border/50 pb-16 max-w-4xl mx-auto">
+          <span className="font-mono-label text-muted-foreground tracking-widest text-[11px]">
+            {bouquet.placedFlowers.length} / 20 SELECTED
           </span>
         </div>
 
-        <div className="h-px bg-border max-w-3xl mx-auto mb-12" />
-
-        <div className="grid lg:grid-cols-[1fr,380px] gap-12 max-w-4xl mx-auto">
+        <div className="grid lg:grid-cols-[1fr,450px] gap-12 max-w-6xl mx-auto">
           {/* Controls */}
-          <div className="space-y-10">
+          <div className="space-y-12">
+
             {/* Names */}
             <div>
-              <p className="font-mono-label text-muted-foreground mb-4">Recipients</p>
-              <div className="grid grid-cols-2 gap-3">
-                <Input value={recipientName} onChange={(e) => setRecipientName(e.target.value)} placeholder="Their name" maxLength={50} className="bg-transparent" />
-                <Input value={senderName} onChange={(e) => setSenderName(e.target.value)} placeholder="Your name" maxLength={50} className="bg-transparent" />
+              <p className="font-mono-label text-muted-foreground mb-4">Dedications</p>
+              <div className="grid grid-cols-2 gap-4">
+                <Input value={recipientName} onChange={(e) => setRecipientName(e.target.value)} placeholder="Recipient's Name" maxLength={50} className="bg-white border-[#e8e0d5] h-12 rounded-xl focus-visible:ring-warm-wine/30" />
+                <Input value={senderName} onChange={(e) => setSenderName(e.target.value)} placeholder="Your Name" maxLength={50} className="bg-white border-[#e8e0d5] h-12 rounded-xl focus-visible:ring-warm-wine/30" />
               </div>
             </div>
 
             {/* Wrapping */}
             <div>
-              <p className="font-mono-label text-muted-foreground mb-4">Wrapping paper</p>
-              <div className="flex gap-3">
+              <p className="font-mono-label text-muted-foreground mb-4">Premium Wrap</p>
+              <div className="flex flex-wrap gap-3">
                 {WRAPPING_PATTERNS.map((wp) => (
                   <button
                     key={wp.id}
                     onClick={() => setBouquet((p) => ({ ...p, wrappingPattern: wp.id }))}
-                    className={`h-14 w-14 rounded-lg border transition-all ${wp.preview} ${bouquet.wrappingPattern === wp.id ? 'border-foreground ring-1 ring-foreground/20 scale-110' : 'border-border hover:scale-105'}`}
+                    className={`h-16 w-16 rounded-xl border-2 transition-all shadow-sm ${wp.preview} ${bouquet.wrappingPattern === wp.id ? 'border-foreground shadow-md scale-105' : 'border-transparent hover:scale-105 hover:shadow-md'}`}
                     title={wp.name}
                   />
                 ))}
@@ -159,100 +245,121 @@ const BouquetCreate = () => {
 
             {/* Bow */}
             <div>
-              <p className="font-mono-label text-muted-foreground mb-4">Bow style</p>
-              <div className="flex gap-3">
+              <p className="font-mono-label text-muted-foreground mb-4">Ribbon</p>
+              <div className="flex flex-wrap gap-3">
                 {BOW_STYLES.map((bow) => (
                   <button
                     key={bow.id}
                     onClick={() => setBouquet((p) => ({ ...p, bowStyle: bow.id }))}
-                    className={`px-6 py-3 rounded-lg border text-center transition-all ${bouquet.bowStyle === bow.id ? 'border-foreground bg-foreground/[0.03]' : 'border-border hover:border-foreground/20'}`}
+                    className={`px-8 py-4 rounded-xl border bg-white shadow-sm transition-all ${bouquet.bowStyle === bow.id ? 'border-foreground ring-1 ring-foreground/10' : 'border-[#e8e0d5] hover:border-foreground/30'}`}
                   >
                     <div
-                      className="w-8 h-3 rounded-full mx-auto mb-2"
-                      style={{ backgroundColor: bow.color }}
-                    />
-                    <span className="font-mono-label text-muted-foreground">{bow.name}</span>
+                      className="w-10 h-3 flex gap-1 mx-auto mb-2"
+                    >
+                      <div className="flex-1 rounded-l-full" style={{ backgroundColor: bow.color }} />
+                      <div className="flex-1 rounded-r-full" style={{ backgroundColor: bow.color }} />
+                    </div>
+                    <span className="font-mono-label text-xs text-muted-foreground">{bow.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="font-mono-label text-muted-foreground mb-4">Greenery</p>
+              <div className="grid grid-cols-2 gap-3">
+                {GREENERY_OPTIONS.map((option) => (
+                  <button
+                    key={option.id}
+                    onClick={() => setBouquet((prev) => ({ ...prev, greeneryStyle: option.id }))}
+                    className={`rounded-xl border bg-white p-4 text-left shadow-sm transition-all ${
+                      bouquet.greeneryStyle === option.id
+                        ? 'border-foreground ring-1 ring-foreground/10'
+                        : 'border-[#e8e0d5] hover:border-foreground/30'
+                    }`}
+                  >
+                    <p className="font-medium text-sm text-foreground">{option.label}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{option.description}</p>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Message */}
-            <div>
+            <div className="pb-10">
               <div className="flex items-center justify-between mb-4">
-                <p className="font-mono-label text-muted-foreground">Message card</p>
+                <p className="font-mono-label text-muted-foreground">Handwritten Note</p>
                 <button
                   onClick={() => setBouquet((p) => ({ ...p, messageCard: !p.messageCard }))}
-                  className={`w-10 h-5 rounded-full transition-colors relative ${bouquet.messageCard ? 'bg-foreground' : 'bg-border'}`}
+                  className={`w-12 h-6 rounded-full transition-colors relative shadow-inner ${bouquet.messageCard ? 'bg-warm-wine' : 'bg-[#e8e0d5]'}`}
                 >
-                  <div className={`w-4 h-4 bg-white rounded-full shadow-sm absolute top-0.5 transition-all ${bouquet.messageCard ? 'left-[22px]' : 'left-0.5'}`} />
+                  <div className={`w-5 h-5 bg-white rounded-full shadow-sm absolute top-0.5 transition-all ${bouquet.messageCard ? 'left-[26px]' : 'left-0.5'}`} />
                 </button>
               </div>
               {bouquet.messageCard && (
                 <Textarea
                   value={bouquet.messageText}
                   onChange={(e) => setBouquet((p) => ({ ...p, messageText: e.target.value }))}
-                  placeholder="Write something beautiful..."
-                  rows={3}
+                  placeholder="Draft a beautiful sentiment..."
+                  rows={4}
                   maxLength={200}
-                  className="bg-transparent font-display italic"
+                  className="bg-white border-[#e8e0d5] rounded-xl resize-none font-display text-lg italic p-5 shadow-sm focus-visible:ring-warm-wine/30 mt-2"
                 />
               )}
             </div>
           </div>
 
-          {/* Preview */}
-          <div className="lg:sticky lg:top-24 lg:self-start">
-            <div className="text-center mb-6">
-              <p className="font-mono-label text-muted-foreground mb-3">CUSTOMIZE YOUR BOUQUET</p>
-              <div className="flex flex-col gap-2 items-center">
+          {/* Canvas Area */}
+          <div className="lg:sticky lg:top-28 lg:self-start">
+            <div className="flex justify-between items-center mb-4">
+              <p className="font-mono-label text-muted-foreground">The Canvas</p>
+              <div className="flex gap-2">
                 <Button
-                  onClick={() => {
-                    const styles: ('classic' | 'tight' | 'wild')[] = ['classic', 'tight', 'wild'];
-                    setBouquet(prev => ({ ...prev, arrangementStyle: styles[(styles.indexOf(prev.arrangementStyle) + 1) % styles.length] }))
-                  }}
-                  className="rounded-none bg-foreground text-background hover:bg-foreground/90 font-mono-label text-xs tracking-wider px-6"
-                >
-                  TRY A NEW ARRANGEMENT
-                </Button>
-                <Button
-                  onClick={() => {
-                    const styles: ('none' | 'eucalyptus' | 'ferns' | 'mixed')[] = ['none', 'eucalyptus', 'ferns', 'mixed'];
-                    setBouquet(prev => ({ ...prev, greeneryStyle: styles[(styles.indexOf(prev.greeneryStyle) + 1) % styles.length] }))
-                  }}
+                  onClick={randomizeArrangement}
                   variant="outline"
-                  className="rounded-none border-foreground text-foreground hover:bg-foreground/5 font-mono-label text-xs tracking-wider px-6"
+                  size="sm"
+                  className="rounded-full border-[#e8e0d5] text-xs font-mono-label bg-white"
+                  title="Shuffle arrangement"
                 >
-                  CHANGE GREENERY
+                  <Shuffle className="w-3 h-3 mr-2" /> Shuffle
                 </Button>
               </div>
             </div>
 
-            <div className="surface-elevated rounded-lg border border-border p-6 min-h-[460px] flex flex-col items-center justify-center relative overflow-hidden">
-              <p className="font-mono-label text-muted-foreground absolute top-4 left-4">Preview</p>
-              <div className="mt-6">
+            <div className="bg-[#f0ece6] rounded-2xl border border-[#e8e0d5] min-h-[580px] w-full flex flex-col items-center justify-center relative overflow-visible shadow-inner" style={{ backgroundImage: 'radial-gradient(#d5d0c8 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
+              <div className="absolute top-4 left-4 z-10 px-3 py-1 bg-white/50 backdrop-blur-md rounded-full text-[10px] font-mono-label tracking-wide flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                Tap a flower to rotate, layer, or remove
+              </div>
+
+              <div className="mt-12 scale-110 flex-1 flex items-center justify-center">
                 <BouquetPreview
                   bouquet={bouquet}
                   senderName={senderName}
                   recipientName={recipientName}
+                  isEditable={true}
+                  onUpdateFlower={updateFlower}
+                  onRemoveFlower={removeFlower}
+                  onMoveFlowerForward={(id) => moveFlowerLayer(id, 'forward')}
+                  onMoveFlowerBackward={(id) => moveFlowerLayer(id, 'backward')}
                 />
               </div>
             </div>
 
-            <div className="mt-6 text-center">
+            <div className="mt-8 text-center">
               <Button
                 onClick={() => setShowPlanDialog(true)}
-                disabled={selectedFlowers.length < 3}
-                className="rounded-full px-10 py-6 bg-foreground text-background hover:bg-foreground/90 w-full"
+                disabled={bouquet.placedFlowers.length === 0}
+                className="rounded-full px-12 py-7 bg-foreground text-background hover:bg-foreground/90 w-full shadow-lg font-mono-label text-sm tracking-widest hover:shadow-xl transition-all"
               >
-                Send bouquet — $1.99
+                Finalize & send
               </Button>
             </div>
           </div>
         </div>
       </div>
 
-      <PlanDialog open={showPlanDialog} onClose={() => setShowPlanDialog(false)} onSelect={handlePlanSelect} />
+      <PlanDialog open={showPlanDialog} onClose={() => setShowPlanDialog(false)} onSelect={handlePlanSelect} product="bouquet" />
     </div>
   );
 };

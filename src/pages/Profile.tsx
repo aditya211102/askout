@@ -78,6 +78,9 @@ const Profile = () => {
         <div className="mb-12">
           <p className="font-mono-label text-muted-foreground mb-3">Dashboard</p>
           <h1 className="font-display text-4xl font-bold tracking-tight">Your moments</h1>
+          <p className="text-muted-foreground text-sm mt-3 max-w-xl">
+            Everything you&apos;ve created lives here, ready to revisit, copy, or share again.
+          </p>
         </div>
 
         <Button onClick={() => navigate('/')} variant="outline" className="rounded-full mb-10 border-border text-sm">
@@ -89,7 +92,7 @@ const Profile = () => {
         ) : cards.length === 0 ? (
           <div className="text-center py-24 border border-border rounded-lg">
             <p className="font-display text-xl font-semibold mb-2">No moments yet</p>
-            <p className="text-muted-foreground text-sm mb-6">Create your first one and share it.</p>
+            <p className="text-muted-foreground text-sm mb-6">Create your first card, bouquet, or voice note and share it when you&apos;re ready.</p>
             <Button onClick={() => navigate('/')} className="rounded-full bg-foreground text-background">Get started</Button>
           </div>
         ) : (

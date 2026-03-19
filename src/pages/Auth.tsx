@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Mail, Lock } from 'lucide-react';
+import { AuthError } from '@supabase/supabase-js';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
@@ -14,15 +15,20 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    supabase.auth.onAuthStateChange((_, session) => { if (session) handlePostLogin(); });
-    supabase.auth.getSession().then(({ data: { session } }) => { if (session) handlePostLogin(); });
-  }, []);
-
-  const handlePostLogin = () => {
+  const handlePostLogin = useCallback(() => {
     if (localStorage.getItem('pendingCard')) navigate('/checkout');
     else navigate('/profile');
-  };
+  }, [navigate]);
+
+  useEffect(() => {
+    const { data: subscription } = supabase.auth.onAuthStateChange((_, session) => {
+      if (session) handlePostLogin();
+    });
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) handlePostLogin();
+    });
+    return () => subscription.subscription.unsubscribe();
+  }, [handlePostLogin]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,8 +42,11 @@ const Auth = () => {
         const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin } });
         if (error) throw error;
       }
-    } catch (err: any) { setError(err.message || 'Something went wrong'); }
-    finally { setLoading(false); }
+    } catch (err) {
+      setError(err instanceof AuthError ? err.message : 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -55,7 +64,7 @@ const Auth = () => {
               {isLogin ? 'Welcome back' : 'Create account'}
             </h1>
             <p className="text-muted-foreground text-sm">
-              {isLogin ? 'Sign in to continue' : 'Join ShareMoments'}
+              {isLogin ? 'Sign in to finish your moment' : 'Save your moment and keep it in your collection'}
             </p>
           </div>
 
@@ -73,6 +82,10 @@ const Auth = () => {
               {loading ? '...' : isLogin ? 'Sign In' : 'Sign Up'}
             </Button>
           </form>
+
+          <p className="text-center text-xs text-muted-foreground mt-4">
+            Your creation stays tied to your account so you can share it later.
+          </p>
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             {isLogin ? "Don't have an account?" : 'Already have one?'}{' '}

@@ -32,9 +32,9 @@ Deno.serve(async (req: Request) => {
       "webhook-timestamp": req.headers.get("webhook-timestamp") || "",
     };
 
-    let event: any;
+    let event: Record<string, unknown>;
     try {
-      event = wh.verify(body, headers);
+      event = wh.verify(body, headers) as Record<string, unknown>;
     } catch (err) {
       console.error("Invalid webhook signature:", err);
       return new Response(JSON.stringify({ error: "Invalid signature" }), {
@@ -45,7 +45,12 @@ Deno.serve(async (req: Request) => {
 
     console.log("Dodo webhook event:", event.event_type || event.type);
 
-    const eventType = event.event_type || event.type || "";
+    const eventType =
+      typeof event.event_type === "string"
+        ? event.event_type
+        : typeof event.type === "string"
+          ? event.type
+          : "";
 
     if (
       eventType === "payment.completed" ||
@@ -53,8 +58,17 @@ Deno.serve(async (req: Request) => {
       eventType === "payment_intent.succeeded" ||
       eventType === "order.completed"
     ) {
-      const metadata = event.data?.metadata || event.metadata || {};
-      const cardId = metadata.card_id;
+      const eventData = typeof event.data === "object" && event.data !== null
+        ? (event.data as Record<string, unknown>)
+        : null;
+      const nestedMetadata = typeof eventData?.metadata === "object" && eventData.metadata !== null
+        ? (eventData.metadata as Record<string, unknown>)
+        : null;
+      const rootMetadata = typeof event.metadata === "object" && event.metadata !== null
+        ? (event.metadata as Record<string, unknown>)
+        : null;
+      const metadata = nestedMetadata || rootMetadata;
+      const cardId = typeof metadata?.card_id === "string" ? metadata.card_id : null;
 
       if (cardId) {
         const supabase = createClient(

@@ -5,14 +5,24 @@ export interface FlowerType {
   color: string;
 }
 
+export interface PlacedFlower {
+  id: string;
+  flowerId: string;
+  x: number;
+  y: number;
+  rotation: number;
+  scale: number;
+  zIndex: number;
+}
+
 export interface BouquetConfig {
-  flowers: string[]; // flower ids
+  placedFlowers: PlacedFlower[];
   ribbonColor: string;
   messageCard: boolean;
   messageText: string;
   wrappingPattern: string;
   bowStyle: string;
-  arrangementStyle: 'classic' | 'tight' | 'wild';
+  arrangementStyle: 'classic' | 'tight' | 'wild' | 'custom';
   greeneryStyle: 'none' | 'eucalyptus' | 'ferns' | 'mixed';
 }
 
@@ -47,12 +57,12 @@ export const BOW_STYLES = [
 ];
 
 export const DEFAULT_BOUQUET: BouquetConfig = {
-  flowers: [],
+  placedFlowers: [],
   ribbonColor: '#ec4899',
   messageCard: false,
   messageText: '',
   wrappingPattern: 'kraft',
   bowStyle: 'classic',
-  arrangementStyle: 'tight',
+  arrangementStyle: 'custom',
   greeneryStyle: 'mixed',
 };

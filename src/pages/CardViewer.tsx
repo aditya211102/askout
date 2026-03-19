@@ -2,10 +2,29 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
-import { type CrushCard, THEMES, STICKERS } from '@/lib/card-types';
+import { type CrushCard, type StickerPlacement, THEMES, STICKERS } from '@/lib/card-types';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database, Json } from '@/integrations/supabase/types';
 
 const noTexts = ["No", "Are you sure?", "Really?!", "Think again!", "Pretty please?", "Last chance!", "😢"];
+type CardRow = Database["public"]["Tables"]["cards"]["Row"];
+
+const isStickerPlacement = (value: Json): value is StickerPlacement => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const sticker = value as Record<string, Json>;
+  return (
+    typeof sticker.type === 'string' &&
+    typeof sticker.x === 'number' &&
+    typeof sticker.y === 'number' &&
+    typeof sticker.scale === 'number' &&
+    typeof sticker.rotation === 'number'
+  );
+};
+
+const parseStickerPlacements = (stickers: Json): StickerPlacement[] => {
+  if (!Array.isArray(stickers)) return [];
+  return stickers.filter(isStickerPlacement);
+};
 
 const CardViewer = () => {
   const { id } = useParams<{ id: string }>();
@@ -27,17 +46,18 @@ const CardViewer = () => {
           .eq('id', id)
           .eq('paid', true)
           .single();
-        if (dbError || !data) { setError('Card not found or not yet paid for'); setLoading(false); return; }
+        const loadedCard = data as CardRow | null;
+        if (dbError || !loadedCard) { setError('Card not found or not yet paid for'); setLoading(false); return; }
         setCard({
-          id: data.id,
-          theme: data.theme as CrushCard['theme'],
-          question: data.question,
-          yesMessage: data.yes_message,
-          noButtonTrick: data.no_button_trick as CrushCard['noButtonTrick'],
-          stickers: (data.stickers as any) || [],
-          recipientName: data.recipient_name || undefined,
-          senderName: (data as any).sender_name || undefined,
-          paid: data.paid,
+          id: loadedCard.id,
+          theme: loadedCard.theme as CrushCard['theme'],
+          question: loadedCard.question,
+          yesMessage: loadedCard.yes_message,
+          noButtonTrick: loadedCard.no_button_trick as CrushCard['noButtonTrick'],
+          stickers: parseStickerPlacements(loadedCard.stickers),
+          recipientName: loadedCard.recipient_name || undefined,
+          senderName: loadedCard.sender_name || undefined,
+          paid: loadedCard.paid,
         });
       } catch {
         setError('Failed to load card');
@@ -112,7 +132,6 @@ const CardViewer = () => {
 
   return (
     <div className={`min-h-screen flex items-center justify-center p-4 ${theme.bg}`}>
-      {/* Floating stickers */}
       {card.stickers.map((s, i) => (
         <motion.div
           key={i}

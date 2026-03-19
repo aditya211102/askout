@@ -11,7 +11,6 @@ const products = [
     label: "CARDS",
     number: "01",
     description: "A playful card with a trick \"No\" button. They literally can't say no.",
-    price: "$1.99",
     route: "/askout/create",
     preview: (
       <div className="w-full h-full bg-gradient-to-br from-rose-100 to-pink-200 rounded-lg flex items-center justify-center p-6">
@@ -30,12 +29,11 @@ const products = [
     label: "BOUQUETS",
     number: "02",
     description: "Handpick watercolor blooms and wrap them into a bouquet that unfolds on screen.",
-    price: "$1.99",
     route: "/bouquet/create",
     preview: (
       <div className="w-full h-full bg-[hsl(40,33%,97%)] rounded-lg flex items-center justify-center p-4">
         <div className="flex flex-wrap items-end justify-center gap-0 max-w-[160px]">
-          {['/flowers/red-rose.png', '/flowers/daisy.png', '/flowers/tulip.png', '/flowers/lavender.png', '/flowers/pink-rose.png'].map((src, i) => (
+          {["/flowers/red-rose.png", "/flowers/daisy.png", "/flowers/tulip.png", "/flowers/lavender.png", "/flowers/pink-rose.png"].map((src, i) => (
             <img key={src} src={src} alt="" className="w-12 h-12 object-contain -mx-1" style={{ transform: `rotate(${(i - 2) * 14}deg)` }} />
           ))}
         </div>
@@ -47,7 +45,6 @@ const products = [
     label: "VOICE",
     number: "03",
     description: "Record a heartfelt message. Delivered on a warm journal with a waveform.",
-    price: "$1.99",
     route: "/voice/create",
     preview: (
       <div className="w-full h-full bg-[hsl(30,20%,18%)] rounded-lg flex flex-col items-center justify-center p-4">
@@ -76,9 +73,13 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-background relative texture-grain">
-      {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-5">
-        <div className="max-w-6xl mx-auto flex items-center justify-end">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <button onClick={() => navigate('/')} className="text-left">
+            <span className="font-display text-lg font-semibold text-foreground">ShareMoments</span>
+            <span className="block font-mono-label text-muted-foreground/70 mt-1">Digital moments, beautifully crafted</span>
+          </button>
+
           <div className="flex items-center gap-4">
             {loggedIn && (
               <button
@@ -100,17 +101,17 @@ const Landing = () => {
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="min-h-[85vh] flex flex-col items-center justify-center px-6 pt-20">
+      <section className="min-h-[85vh] flex flex-col items-center justify-center px-6 pt-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="text-center max-w-4xl"
         >
-          <p className="font-mono-label text-muted-foreground mb-6">
-            Digital moments, beautifully crafted
-          </p>
+          <div className="inline-flex items-center gap-3 rounded-full border border-border bg-card/70 px-4 py-2 mb-6">
+            <span className="font-mono-label text-warm-wine">Personal</span>
+            <span className="text-sm text-muted-foreground">Made for one meaningful reveal</span>
+          </div>
           <h1 className="font-display text-5xl sm:text-6xl md:text-[5.5rem] font-bold leading-[0.95] tracking-tight mb-8">
             Turn feelings into
             <br />
@@ -119,9 +120,8 @@ const Landing = () => {
             </span>{" "}
             moments
           </h1>
-          <p className="text-muted-foreground text-lg md:text-xl max-w-xl mx-auto leading-relaxed mb-12">
-            Three ways to say what matters. Crafted with intention,
-            delivered with delight.
+          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-12">
+            Three thoughtful formats for sharing something personal, playful, or heartfelt without making it feel generic.
           </p>
           <Button
             onClick={() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth" })}
@@ -133,12 +133,10 @@ const Landing = () => {
         </motion.div>
       </section>
 
-      {/* Divider */}
       <div className="max-w-6xl mx-auto px-6">
         <div className="h-px bg-border" />
       </div>
 
-      {/* Products with Previews */}
       <section id="products" className="max-w-6xl mx-auto px-6 py-24 scroll-mt-8">
         <div className="grid md:grid-cols-3 gap-6">
           {products.map((product, i) => (
@@ -153,7 +151,6 @@ const Landing = () => {
                 onClick={() => navigate(product.route)}
                 className="w-full text-left group"
               >
-                {/* Preview card */}
                 <div className="aspect-[4/3] rounded-lg border border-border overflow-hidden mb-5 transition-transform duration-500 group-hover:scale-[1.02] group-hover:shadow-lg">
                   {product.preview}
                 </div>
@@ -177,13 +174,12 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* How it works */}
       <section className="max-w-6xl mx-auto px-6 pb-32">
         <div className="h-px bg-border mb-24" />
         <div className="grid md:grid-cols-3 gap-16">
           {[
             { num: "01", title: "Choose & customize", body: "Pick a product and personalize every detail to make it yours." },
-            { num: "02", title: "Quick checkout", body: "Secure payment at $1.99. No subscriptions, ever." },
+            { num: "02", title: "Quick checkout", body: "A simple one-time checkout with no subscriptions or clutter." },
             { num: "03", title: "Share the link", body: "Send it to someone special and watch the magic unfold." },
           ].map((step, i) => (
             <motion.div
@@ -201,7 +197,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="border-t border-border py-8 px-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <span className="font-display text-sm text-muted-foreground">ShareMoments</span>

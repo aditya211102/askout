@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Copy, Check, ExternalLink, Loader2 } from 'lucide-react';
+import { Copy, Check, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -38,7 +38,7 @@ const Success = () => {
           <div className="text-center">
             <div className="w-8 h-8 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin mx-auto mb-6" />
             <p className="font-display text-lg font-semibold">Confirming payment</p>
-            <p className="text-muted-foreground text-sm mt-1">This usually takes a few seconds.</p>
+            <p className="text-muted-foreground text-sm mt-1">We&apos;re preparing your share link now.</p>
           </div>
         )}
 
@@ -49,7 +49,7 @@ const Success = () => {
             <p className="text-muted-foreground text-sm mb-1">
               Plan: <span className="text-foreground font-medium capitalize">{plan}</span>
             </p>
-            <p className="text-muted-foreground text-sm mb-6">Share this link with someone special.</p>
+            <p className="text-muted-foreground text-sm mb-6">Share this link whenever the moment feels right.</p>
             <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-3 mb-6">
               <input readOnly value={shareLink} className="flex-1 bg-transparent text-xs font-mono outline-none truncate text-foreground" />
               <Button size="sm" variant="outline" onClick={() => { navigator.clipboard.writeText(shareLink); setCopied(true); setTimeout(() => setCopied(false), 2000); }} className="rounded-full shrink-0 border-border">

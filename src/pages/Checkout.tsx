@@ -37,7 +37,7 @@ const Checkout = () => {
         }
       }
 
-      const insertData: any = {
+      const insertData: Record<string, unknown> = {
         user_id: session.user.id, plan, paid: false, product_type: productType,
         question: cardData.question || 'Will you go out with me?',
         yes_message: cardData.yesMessage || '',
@@ -75,14 +75,14 @@ const Checkout = () => {
 
     run();
     return () => { cancelled = true; };
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative texture-grain">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
         <div className="w-8 h-8 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin mx-auto mb-6" />
         <p className="font-display text-lg font-semibold">Preparing your moment</p>
-        <p className="text-muted-foreground text-sm mt-1">Redirecting to secure payment...</p>
+        <p className="text-muted-foreground text-sm mt-1">Saving your creation, then sending you to secure payment...</p>
       </motion.div>
     </div>
   );

@@ -261,14 +261,14 @@ const VoiceCreate = () => {
                 disabled={!audioBlob}
                 className="rounded-full px-10 py-6 bg-[hsl(40,33%,90%)] text-[hsl(20,18%,15%)] hover:bg-[hsl(40,33%,85%)] w-full font-medium disabled:opacity-30"
               >
-                Send voice note — $1.99
+                Send voice note
               </Button>
             </div>
           </div>
         </div>
       </div>
 
-      <PlanDialog open={showPlanDialog} onClose={() => setShowPlanDialog(false)} onSelect={handlePlanSelect} />
+      <PlanDialog open={showPlanDialog} onClose={() => setShowPlanDialog(false)} onSelect={handlePlanSelect} product="voice" />
     </div>
   );
 };
