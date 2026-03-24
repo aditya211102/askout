@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowDown, ArrowUp, RotateCcw, RotateCw, Trash2 } from 'lucide-react';
-import { FLOWERS, BOW_STYLES, WRAPPING_PATTERNS, type BouquetConfig, type PlacedFlower } from '@/lib/bouquet-types';
+import { FLOWERS, BOW_STYLES, type BouquetConfig, type PlacedFlower } from '@/lib/bouquet-types';
 
 interface BouquetPreviewProps {
   bouquet: BouquetConfig;
@@ -40,6 +40,24 @@ const GUIDE_SLOTS = [
   { x: 24, y: 16 },
 ];
 
+const resolveWrapSettings = (bouquet: BouquetConfig) => {
+  const legacy = bouquet.wrappingPattern;
+  const style = bouquet.wrappingStyle
+    || (legacy === 'layered' ? 'layered' : legacy === 'market' ? 'market' : legacy === 'none' ? 'none' : 'cone');
+  const color = bouquet.wrappingColor
+    || (legacy === 'ivory' || legacy === 'sage' || legacy === 'blush' || legacy === 'charcoal' || legacy === 'kraft'
+      ? legacy
+      : legacy === 'layered'
+        ? 'blush'
+        : legacy === 'market'
+          ? 'kraft'
+          : 'kraft');
+
+  return { style, color };
+};
+
+const getDisplayRotation = (_flowerId: string, rotation: number) => rotation;
+
 const BouquetPreview = ({
   bouquet,
   senderName,
@@ -52,17 +70,21 @@ const BouquetPreview = ({
 }: BouquetPreviewProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [selectedFlowerId, setSelectedFlowerId] = useState<string | null>(null);
-  const wrapping = WRAPPING_PATTERNS.find((w) => w.id === bouquet.wrappingPattern);
+  const wrap = resolveWrapSettings(bouquet);
   const bow = BOW_STYLES.find((b) => b.id === bouquet.bowStyle);
   const count = bouquet.placedFlowers.length;
   const { greeneryStyle = 'mixed' } = bouquet;
-  const showWrapping = wrapping && wrapping.id !== 'none';
+  const showWrapping = count > 0 && wrap.style !== 'none';
+  const wrapOffset = wrap.style === 'layered'
+    ? (count >= 8 ? '-120px' : count >= 5 ? '-112px' : '-104px')
+    : wrap.style === 'market'
+      ? (count >= 8 ? '-112px' : count >= 5 ? '-104px' : '-96px')
+      : (count >= 8 ? '-108px' : count >= 5 ? '-100px' : '-92px');
   const orderedFlowers = useMemo(
     () => [...bouquet.placedFlowers].sort((a, b) => a.zIndex - b.zIndex),
     [bouquet.placedFlowers],
   );
   const selectedFlower = orderedFlowers.find((flower) => flower.id === selectedFlowerId) || null;
-
   useEffect(() => {
     if (!selectedFlowerId) return;
     if (!bouquet.placedFlowers.some((flower) => flower.id === selectedFlowerId)) {
@@ -73,21 +95,122 @@ const BouquetPreview = ({
   const renderWrapping = () => {
     if (!showWrapping) return null;
 
-    const wrapWidth = 176 + Math.min(count, 10) * 5;
-    const wrapHeight = 136 + Math.min(count, 10) * 3;
-    const topInset = 18 - Math.min(count, 8);
+    if (wrap.style === 'layered') {
+      const width = 214 + Math.min(count, 10) * 5;
+      const height = 176 + Math.min(count, 10) * 4;
+      const layeredCone =
+        wrap.color === 'ivory' ? ['#f4efe7', '#e5ddd1']
+        : wrap.color === 'sage' ? ['#dfe9d8', '#b8c9ad']
+        : wrap.color === 'charcoal' ? ['#6b6766', '#3c3938']
+        : wrap.color === 'kraft' ? ['#ead2a1', '#d5b071']
+        : ['#f6d4db', '#efb9c4'];
+      const layeredSheet =
+        wrap.color === 'charcoal' ? 'rgba(255,255,255,0.14)'
+        : wrap.color === 'sage' ? 'rgba(246,250,243,0.74)'
+        : wrap.color === 'ivory' ? 'rgba(255,255,255,0.88)'
+        : 'rgba(255,253,250,0.50)';
+
+      return (
+        <div
+          className="relative z-[8] flex justify-center"
+          style={{
+            width: `${width}px`,
+            height: `${height}px`,
+            filter: 'drop-shadow(0 18px 24px rgba(0,0,0,0.12))',
+          }}
+        >
+          <svg viewBox="0 0 200 160" className="h-full w-full">
+            <defs>
+              <linearGradient id="layeredCone" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={layeredCone[0]} />
+                <stop offset="100%" stopColor={layeredCone[1]} />
+              </linearGradient>
+              <linearGradient id="layeredShadow" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="rgba(255,255,255,0.55)" />
+                <stop offset="100%" stopColor="rgba(120,88,96,0.14)" />
+              </linearGradient>
+            </defs>
+
+            <path d="M16 36 L88 58 L74 148 L18 148 Z" fill={layeredSheet} />
+            <path d="M184 36 L112 58 L126 148 L182 148 Z" fill={layeredSheet} />
+            <path d="M54 54 L146 54 Q138 88 120 148 L80 148 Q62 88 54 54 Z" fill="url(#layeredCone)" />
+            <path d="M92 58 L108 58 L104 148 L96 148 Z" fill="rgba(117,82,90,0.10)" />
+            <path d="M62 60 Q100 38 138 60" stroke="rgba(255,255,255,0.34)" strokeWidth="1.5" fill="none" />
+            <path d="M52 54 L148 54 Q132 42 100 42 Q68 42 52 54 Z" fill="rgba(255,255,255,0.12)" />
+            <path d="M20 40 L86 60 L72 84 L24 68 Z" fill={layeredSheet} />
+            <path d="M180 40 L114 60 L128 84 L176 68 Z" fill={layeredSheet} />
+            <path d="M54 54 L146 54 Q138 88 120 148 L80 148 Q62 88 54 54 Z" fill="url(#layeredShadow)" opacity="0.24" />
+          </svg>
+        </div>
+      );
+    }
+
+    if (wrap.style === 'market') {
+      const width = 220 + Math.min(count, 10) * 5;
+      const height = 176 + Math.min(count, 10) * 4;
+      const marketPaper =
+        wrap.color === 'ivory' ? ['#f6f1e7', '#d9cdbd']
+        : wrap.color === 'sage' ? ['#dbe8d4', '#a9be9e']
+        : wrap.color === 'blush' ? ['#f5dbd7', '#dba29d']
+        : wrap.color === 'charcoal' ? ['#595756', '#2a2928']
+        : ['#eed4a3', '#c7984f'];
+
+      return (
+        <div
+          className="relative z-[8] flex justify-center"
+          style={{
+            width: `${width}px`,
+            height: `${height}px`,
+            filter: 'drop-shadow(0 18px 24px rgba(0,0,0,0.12))',
+          }}
+        >
+          <svg viewBox="0 0 200 160" className="h-full w-full">
+            <defs>
+              <linearGradient id="marketPaper" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor={marketPaper[0]} />
+                <stop offset="100%" stopColor={marketPaper[1]} />
+              </linearGradient>
+              <linearGradient id="marketEdge" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="rgba(255,255,255,0.28)" />
+                <stop offset="100%" stopColor="rgba(120,95,68,0.14)" />
+              </linearGradient>
+            </defs>
+
+            <path d="M32 36 L88 46 L80 148 L28 148 Z" fill="url(#marketEdge)" opacity="0.46" />
+            <path d="M168 36 L112 46 L120 148 L172 148 Z" fill="url(#marketEdge)" opacity="0.46" />
+            <path d="M46 38 L154 38 L138 148 L62 148 Z" fill="url(#marketPaper)" />
+            <path d="M52 40 Q100 30 148 40" stroke="rgba(255,246,223,0.44)" strokeWidth="2" fill="none" />
+            <path d="M92 40 L108 40 L104 148 L96 148 Z" fill="rgba(114,80,34,0.08)" />
+          </svg>
+        </div>
+      );
+    }
+
+    const fullness = Math.min(count, 12);
+    const wrapWidth = 208 + fullness * 5;
+    const wrapHeight = 164 + fullness * 4;
+    const topInset = 18 - Math.min(count, 6);
 
     const colorMap: Record<string, { top: string; bottom: string }> = {
-      kraft: { top: '#fceaa1', bottom: '#e0b85c' },
-      ivory: { top: '#ffffff', bottom: '#e8e0d5' },
-      sage: { top: '#e3f0d5', bottom: '#9eb88d' },
-      blush: { top: '#ffebe8', bottom: '#e39d95' },
-      charcoal: { top: '#5e5e5e', bottom: '#262626' },
+      kraft: { top: '#ecd29a', bottom: '#c59648' },
+      ivory: { top: '#fffef9', bottom: '#e7ddd2' },
+      sage: { top: '#e2eedf', bottom: '#9ab391' },
+      blush: { top: '#fde6e4', bottom: '#e0a6a0' },
+      charcoal: { top: '#575654', bottom: '#232321' },
     };
 
-    const colors = colorMap[wrapping.id] || colorMap.kraft;
-    const patternStroke = wrapping.id === 'charcoal' ? 'rgba(255,255,255,0.08)' : 'rgba(120,95,68,0.12)';
-    const edgeShade = wrapping.id === 'charcoal' ? 'rgba(255,255,255,0.06)' : 'rgba(92,69,44,0.08)';
+    const colors = colorMap[wrap.color] || colorMap.kraft;
+    const patternStroke = wrap.color === 'charcoal' ? 'rgba(255,255,255,0.08)' : 'rgba(120,95,68,0.12)';
+    const edgeShade = wrap.color === 'charcoal' ? 'rgba(255,255,255,0.06)' : 'rgba(92,69,44,0.08)';
+    const innerSheet = wrap.color === 'ivory'
+      ? 'rgba(255,255,255,0.96)'
+      : wrap.color === 'charcoal'
+        ? 'rgba(247,247,245,0.16)'
+        : wrap.color === 'sage'
+          ? 'rgba(246,250,243,0.88)'
+          : wrap.color === 'blush'
+            ? 'rgba(255,244,241,0.9)'
+            : 'rgba(255,247,232,0.82)';
 
     return (
       <div
@@ -95,7 +218,7 @@ const BouquetPreview = ({
         style={{
           width: `${wrapWidth}px`,
           height: `${wrapHeight}px`,
-          filter: 'drop-shadow(0 22px 28px rgba(0,0,0,0.14))',
+          filter: 'drop-shadow(0 18px 24px rgba(0,0,0,0.14))',
         }}
       >
         <svg viewBox="0 0 200 150" className="h-full w-full">
@@ -108,58 +231,60 @@ const BouquetPreview = ({
               <stop offset="0%" stopColor="rgba(255,255,255,0.28)" />
               <stop offset="100%" stopColor={edgeShade} />
             </linearGradient>
+            <linearGradient id="wrapShadow" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="rgba(0,0,0,0.02)" />
+              <stop offset="100%" stopColor="rgba(0,0,0,0.12)" />
+            </linearGradient>
             <filter id="texture">
               <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" result="noise" />
               <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.05 0" in="noise" result="coloredNoise" />
               <feComposite operator="in" in="coloredNoise" in2="SourceGraphic" result="texture" />
               <feBlend mode="multiply" in="texture" in2="SourceGraphic" />
             </filter>
-            <clipPath id="wrapClip">
-              <path d={`M32 ${topInset} L168 ${topInset} Q176 54 156 142 L44 142 Q24 54 32 ${topInset} Z`} />
-            </clipPath>
           </defs>
 
-          <path d={`M26 ${topInset + 6} L74 ${topInset + 12} L58 144 L18 144 Q20 78 26 ${topInset + 6} Z`} fill="url(#wrapEdge)" opacity="0.7" />
-          <path d={`M174 ${topInset + 6} L126 ${topInset + 12} L142 144 L182 144 Q180 78 174 ${topInset + 6} Z`} fill="url(#wrapEdge)" opacity="0.7" />
+          <path d={`M30 ${topInset + 2} L84 ${topInset + 20} L70 100 L28 90 Z`} fill={innerSheet} opacity="0.92" />
+          <path d={`M170 ${topInset + 2} L116 ${topInset + 20} L130 100 L172 90 Z`} fill={innerSheet} opacity="0.92" />
+          <path d={`M34 ${topInset + 10} L86 ${topInset + 22} L72 148 L34 148 Q28 106 34 ${topInset + 10} Z`} fill="url(#wrapEdge)" opacity="0.68" />
+          <path d={`M166 ${topInset + 10} L114 ${topInset + 22} L128 148 L166 148 Q172 106 166 ${topInset + 10} Z`} fill="url(#wrapEdge)" opacity="0.68" />
+          <path d={`M58 ${topInset + 20} L142 ${topInset + 20} Q136 58 118 146 L82 146 Q64 58 58 ${topInset + 20} Z`} fill="url(#wrapGrad)" filter="url(#texture)" />
+          <path d={`M62 ${topInset + 20} L138 ${topInset + 20} Q120 42 100 42 Q80 42 62 ${topInset + 20} Z`} fill="rgba(255,255,255,0.12)" />
+          <path d={`M72 ${topInset + 24} Q100 ${topInset + 30} 128 ${topInset + 24}`} stroke="rgba(255,255,255,0.24)" strokeWidth="1.3" fill="none" />
+          <path d="M94 48 L106 48 L103 146 L97 146 Z" fill="url(#wrapShadow)" opacity="0.42" />
 
-          <path d={`M32 ${topInset} L168 ${topInset} Q176 54 156 142 L44 142 Q24 54 32 ${topInset} Z`} fill="url(#wrapGrad)" filter="url(#texture)" />
-
-          <g clipPath="url(#wrapClip)" opacity={wrapping.id === 'kraft' ? 0.28 : wrapping.id === 'charcoal' ? 0.18 : 0.22}>
-            {wrapping.id === 'blush' && (
+          <g opacity={wrap.color === 'kraft' ? 0.28 : wrap.color === 'charcoal' ? 0.18 : 0.22}>
+            {wrap.color === 'blush' && (
               <>
-                <path d="M24 48 C78 34 132 34 178 50" stroke={patternStroke} strokeWidth="2" fill="none" />
-                <path d="M20 84 C76 68 136 70 182 88" stroke={patternStroke} strokeWidth="2" fill="none" />
+                <path d="M58 56 C84 48 116 48 142 56" stroke={patternStroke} strokeWidth="1.8" fill="none" />
+                <path d="M64 88 C86 82 114 82 136 88" stroke={patternStroke} strokeWidth="1.8" fill="none" />
               </>
             )}
-            {wrapping.id === 'sage' && (
+            {wrap.color === 'sage' && (
               <>
-                <path d="M52 30 C82 64 74 94 60 136" stroke={patternStroke} strokeWidth="1.8" fill="none" />
-                <path d="M148 28 C120 66 128 96 142 136" stroke={patternStroke} strokeWidth="1.8" fill="none" />
+                <path d="M68 52 C80 70 80 96 72 134" stroke={patternStroke} strokeWidth="1.4" fill="none" />
+                <path d="M132 52 C120 70 120 96 128 134" stroke={patternStroke} strokeWidth="1.4" fill="none" />
               </>
             )}
-            {wrapping.id === 'ivory' && (
+            {wrap.color === 'ivory' && (
               <>
-                <path d="M36 56 C78 46 126 48 166 60" stroke={patternStroke} strokeWidth="1.6" fill="none" />
-                <path d="M42 96 C88 88 120 88 160 98" stroke={patternStroke} strokeWidth="1.6" fill="none" />
+                <path d="M58 60 C82 54 118 54 142 60" stroke={patternStroke} strokeWidth="1.3" fill="none" />
+                <path d="M62 92 C84 88 116 88 138 92" stroke={patternStroke} strokeWidth="1.3" fill="none" />
               </>
             )}
-            {wrapping.id === 'kraft' && (
+            {wrap.color === 'kraft' && (
               <>
-                <circle cx="58" cy="56" r="2.4" fill={patternStroke} />
-                <circle cx="136" cy="72" r="2" fill={patternStroke} />
-                <circle cx="88" cy="98" r="1.8" fill={patternStroke} />
+                <circle cx="70" cy="64" r="1.8" fill={patternStroke} />
+                <circle cx="128" cy="80" r="1.8" fill={patternStroke} />
+                <circle cx="92" cy="102" r="1.5" fill={patternStroke} />
               </>
             )}
-            {wrapping.id === 'charcoal' && (
+            {wrap.color === 'charcoal' && (
               <>
-                <path d="M40 44 C82 38 126 40 166 50" stroke={patternStroke} strokeWidth="1.8" fill="none" />
-                <path d="M34 104 C78 96 126 98 170 110" stroke={patternStroke} strokeWidth="1.8" fill="none" />
+                <path d="M60 58 C84 52 116 52 140 58" stroke={patternStroke} strokeWidth="1.6" fill="none" />
+                <path d="M66 98 C86 92 114 92 134 98" stroke={patternStroke} strokeWidth="1.6" fill="none" />
               </>
             )}
           </g>
-
-          <path d={`M32 ${topInset} L168 ${topInset} Q148 34 100 42 Q52 34 32 ${topInset} Z`} fill="rgba(255,255,255,0.16)" />
-          <path d={`M42 ${topInset + 8} Q100 ${topInset + 18} 158 ${topInset + 8}`} stroke="rgba(255,255,255,0.28)" strokeWidth="1.5" fill="none" />
         </svg>
       </div>
     );
@@ -175,7 +300,7 @@ const BouquetPreview = ({
         height={count >= 8 ? 56 : 50}
         viewBox="0 0 90 50"
         className="absolute z-[25] drop-shadow-lg"
-        style={{ top: count >= 8 ? '-18px' : '-15px' }}
+        style={{ top: count >= 8 ? '18px' : '20px' }}
       >
         <defs>
           <filter id="bowShadow">
@@ -196,25 +321,25 @@ const BouquetPreview = ({
 
     const anchors = [
       {
-        x: -50,
-        y: 18,
-        angle: -14,
-        scale: 1.02,
+        x: -30,
+        y: -18,
+        angle: -16,
+        scale: 0.78,
+        variant: greeneryStyle === 'mixed' ? 'eucalyptus' : greeneryStyle,
+      },
+      {
+        x: 28,
+        y: -16,
+        angle: 14,
+        scale: 0.76,
         variant: greeneryStyle === 'mixed' ? 'ferns' : greeneryStyle,
       },
       {
-        x: -8,
-        y: 24,
-        angle: -4,
-        scale: 0.92,
+        x: 2,
+        y: -10,
+        angle: 2,
+        scale: 0.64,
         variant: greeneryStyle === 'ferns' ? 'ferns' : 'eucalyptus',
-      },
-      {
-        x: 42,
-        y: 20,
-        angle: 12,
-        scale: 0.98,
-        variant: greeneryStyle === 'mixed' ? 'eucalyptus' : greeneryStyle,
       },
     ].filter((_, index) => {
       if (count <= 3) return index < 1;
@@ -231,11 +356,13 @@ const BouquetPreview = ({
     return anchors.map((anchor, index) => {
       const useFern = anchor.variant === 'ferns';
 
+      const opacity = greeneryStyle === 'mixed' ? 0.48 : greeneryStyle === 'eucalyptus' ? 0.42 : 0.5;
+
       return (
         <motion.div
           key={`leaf-${index}`}
           initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 0.68 }}
+          animate={{ scale: 1, opacity }}
           transition={{ delay: 0.08 + index * 0.05, type: 'spring', damping: 16 }}
           className="absolute z-[3]"
           style={{
@@ -246,50 +373,39 @@ const BouquetPreview = ({
           }}
         >
           {useFern ? (
-            <svg width="40" height="92" viewBox="0 0 40 92" fill="none" className="drop-shadow-sm">
+            <svg width="34" height="68" viewBox="0 0 34 68" fill="none" className="drop-shadow-sm">
               <defs>
                 <linearGradient id={`fernStem-${index}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#9bcf86" />
-                  <stop offset="55%" stopColor="#5ea25b" />
-                  <stop offset="100%" stopColor="#3d7741" />
+                  <stop offset="0%" stopColor="#91ad87" />
+                  <stop offset="55%" stopColor="#628055" />
+                  <stop offset="100%" stopColor="#35533a" />
                 </linearGradient>
               </defs>
-              <path d="M20 88 C19 68 19 46 20 10" stroke={`url(#fernStem-${index})`} strokeWidth="2.3" strokeLinecap="round" opacity="0.88" />
-              {[22, 32, 42, 52, 62, 72].map((yy, idx) => (
+              <path d="M17 62 C17 48 17 30 17 10" stroke={`url(#fernStem-${index})`} strokeWidth="1.5" strokeLinecap="round" opacity="0.58" />
+              {[18, 26, 34, 42, 50, 58].map((yy, idx) => (
                 <g key={idx}>
-                  <path d={`M20 ${yy} C10 ${yy - 3} 8 ${yy - 10} 10 ${yy - 17}`} stroke="#4f964d" strokeWidth="1.5" strokeLinecap="round" opacity="0.9" />
-                  <path d={`M20 ${yy} C30 ${yy - 3} 32 ${yy - 10} 30 ${yy - 17}`} stroke="#4f964d" strokeWidth="1.5" strokeLinecap="round" opacity="0.9" />
-                  <path d={`M20 ${yy + 1} C13 ${yy - 1} 12 ${yy - 6} 13 ${yy - 11}`} stroke="#9ad68f" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
-                  <path d={`M20 ${yy + 1} C27 ${yy - 1} 28 ${yy - 6} 27 ${yy - 11}`} stroke="#9ad68f" strokeWidth="1" strokeLinecap="round" opacity="0.6" />
+                  <path d={`M17 ${yy} C9 ${yy - 3} 8 ${yy - 8} 9 ${yy - 13}`} stroke="#66855c" strokeWidth="1" strokeLinecap="round" opacity="0.58" />
+                  <path d={`M17 ${yy} C25 ${yy - 3} 26 ${yy - 8} 25 ${yy - 13}`} stroke="#66855c" strokeWidth="1" strokeLinecap="round" opacity="0.58" />
                 </g>
               ))}
             </svg>
           ) : (
-            <svg width="30" height="72" viewBox="0 0 30 72" fill="none" className="drop-shadow-sm">
+            <svg width="32" height="62" viewBox="0 0 32 62" fill="none" className="drop-shadow-sm">
               <defs>
                 <linearGradient id={`eucalyptusStem-${index}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#a9c3ad" />
-                  <stop offset="100%" stopColor="#729079" />
+                  <stop offset="0%" stopColor="#9ab299" />
+                  <stop offset="100%" stopColor="#647a67" />
                 </linearGradient>
               </defs>
-              <path d="M15 68 C15 54 15 40 15 10" stroke={`url(#eucalyptusStem-${index})`} strokeWidth="1.8" strokeLinecap="round" opacity="0.68" />
-              {[20, 31, 42, 53].map((yy, idx) => (
+              <path d="M16 56 C16 44 16 28 16 10" stroke={`url(#eucalyptusStem-${index})`} strokeWidth="1.2" strokeLinecap="round" opacity="0.34" />
+              {[18, 26, 34, 42, 50].map((yy, idx) => (
                 <g key={idx}>
                   <path
                     d={idx % 2 === 0
-                      ? `M15 ${yy} C7 ${yy - 3} 6 ${yy - 10} 11 ${yy - 14} C15 ${yy - 17} 20 ${yy - 11} 19 ${yy - 5} C18 ${yy} 13 ${yy + 1} 15 ${yy}`
-                      : `M15 ${yy} C23 ${yy - 3} 24 ${yy - 10} 19 ${yy - 14} C15 ${yy - 17} 10 ${yy - 11} 11 ${yy - 5} C12 ${yy} 17 ${yy + 1} 15 ${yy}`}
-                    fill="#9ab5a1"
-                    opacity="0.72"
-                  />
-                  <path
-                    d={idx % 2 === 0
-                      ? `M14 ${yy - 3} C11 ${yy - 6} 10 ${yy - 9} 12 ${yy - 11}`
-                      : `M16 ${yy - 3} C19 ${yy - 6} 20 ${yy - 9} 18 ${yy - 11}`}
-                    stroke="#dfe9de"
-                    strokeWidth="0.9"
-                    strokeLinecap="round"
-                    opacity="0.4"
+                      ? `M16 ${yy} C9 ${yy - 3} 8 ${yy - 8} 12 ${yy - 12} C16 ${yy - 15} 22 ${yy - 11} 21 ${yy - 6} C20 ${yy - 1} 16 ${yy + 1} 16 ${yy}`
+                      : `M16 ${yy} C23 ${yy - 3} 24 ${yy - 8} 20 ${yy - 12} C16 ${yy - 15} 10 ${yy - 11} 11 ${yy - 6} C12 ${yy - 1} 16 ${yy + 1} 16 ${yy}`}
+                    fill="#96ae99"
+                    opacity="0.38"
                   />
                 </g>
               ))}
@@ -376,7 +492,7 @@ const BouquetPreview = ({
                   animate={{
                     x: placedFlower.x,
                     y: placedFlower.y,
-                    rotate: placedFlower.rotation,
+                    rotate: getDisplayRotation(placedFlower.flowerId, placedFlower.rotation),
                     scale: placedFlower.scale,
                     opacity: 1,
                     filter: isSelected ? 'drop-shadow(0 16px 22px rgba(91, 55, 43, 0.28))' : 'drop-shadow(0 10px 15px rgba(0,0,0,0.3))',
@@ -406,7 +522,7 @@ const BouquetPreview = ({
           </AnimatePresence>
         </div>
 
-        <div className="relative flex w-full justify-center" style={{ marginTop: '-40px' }}>
+        <div className="relative flex w-full justify-center" style={{ marginTop: wrapOffset }}>
           {showWrapping && renderWrapping()}
           <div className="absolute top-0 flex w-full justify-center">
             {renderBow()}

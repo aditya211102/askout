@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Check, Shuffle } from 'lucide-react';
+import { ArrowLeft, Check, Sparkles, Shuffle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
   FLOWERS,
-  WRAPPING_PATTERNS,
+  WRAP_COLORS,
+  WRAP_STYLES,
   BOW_STYLES,
   DEFAULT_BOUQUET,
   type BouquetConfig,
@@ -30,17 +31,19 @@ const SMART_POSITIONS = [
   { x: 0, y: 36, rotation: 0, scale: 0.92 },
 ];
 
-const createSmartFlowerPlacement = (count: number): Pick<PlacedFlower, 'x' | 'y' | 'rotation' | 'scale'> => {
+const createSmartFlowerPlacement = (flowerId: string, count: number): Pick<PlacedFlower, 'x' | 'y' | 'rotation' | 'scale'> => {
   const base = SMART_POSITIONS[count % SMART_POSITIONS.length];
   const ring = Math.floor(count / SMART_POSITIONS.length);
   const xOffset = (Math.random() - 0.5) * (12 + ring * 6);
   const yOffset = (Math.random() - 0.5) * (10 + ring * 4);
-  const rotationOffset = (Math.random() - 0.5) * 8;
+  const isTulip = flowerId === 'tulip';
+  const rotationOffset = (Math.random() - 0.5) * (isTulip ? 3 : 8);
+  const baseRotation = isTulip ? 0 : base.rotation;
 
   return {
     x: base.x + xOffset,
     y: base.y + yOffset + ring * 8,
-    rotation: base.rotation + rotationOffset,
+    rotation: baseRotation + rotationOffset,
     scale: Math.max(0.88, Math.min(1.12, base.scale + (Math.random() - 0.5) * 0.06)),
   };
 };
@@ -58,13 +61,19 @@ const BouquetCreate = () => {
   const [recipientName, setRecipientName] = useState('');
   const [senderName, setSenderName] = useState('');
   const [showPlanDialog, setShowPlanDialog] = useState(false);
+  const selectedFlowerSummaries = useMemo(() => {
+    const uniqueFlowerIds = Array.from(new Set(bouquet.placedFlowers.map((flower) => flower.flowerId)));
+    return uniqueFlowerIds
+      .map((flowerId) => FLOWERS.find((flower) => flower.id === flowerId))
+      .filter((flower): flower is NonNullable<typeof flower> => Boolean(flower));
+  }, [bouquet.placedFlowers]);
 
   const addFlower = (flowerId: string) => {
     setBouquet((prev) => {
       // Allow up to 20 placed flowers in the canvas
       if (prev.placedFlowers.length >= 20) return prev;
 
-      const placement = createSmartFlowerPlacement(prev.placedFlowers.length);
+      const placement = createSmartFlowerPlacement(flowerId, prev.placedFlowers.length);
       const newFlower: PlacedFlower = {
         id: crypto.randomUUID(),
         flowerId,
@@ -126,7 +135,7 @@ const BouquetCreate = () => {
         .map((flower) => ({ flower, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
         .map(({ flower }, index) => {
-          const placement = createSmartFlowerPlacement(index);
+          const placement = createSmartFlowerPlacement(flower.flowerId, index);
           return {
             ...flower,
             x: placement.x,
@@ -178,7 +187,7 @@ const BouquetCreate = () => {
         </div>
 
         {/* Flower Grid - Exact match of screenshot */}
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-y-16 gap-x-4 max-w-3xl mx-auto mb-16 pt-6">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-y-16 gap-x-4 max-w-3xl mx-auto mb-16 pt-6 overflow-visible">
           {FLOWERS.map((flower) => {
             const count = bouquet.placedFlowers.filter(f => f.flowerId === flower.id).length;
             const isSelected = count > 0;
@@ -188,13 +197,20 @@ const BouquetCreate = () => {
                 onClick={() => addFlower(flower.id)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`relative aspect-square flex items-center justify-center rounded-full transition-all duration-500 mx-auto w-24 h-24 ${isSelected ? 'ring-[1px] ring-foreground/20 ring-offset-2' : ''}`}
+                className={`group relative z-0 aspect-square flex items-center justify-center rounded-full transition-all duration-500 mx-auto w-24 h-24 hover:z-[120] focus-within:z-[120] ${isSelected ? 'ring-[1px] ring-foreground/20 ring-offset-2' : ''}`}
               >
                 <img
                   src={flower.image}
                   alt={flower.name}
                   className={`w-full h-full object-contain transition-all duration-300 ${isSelected ? 'opacity-100 scale-105' : 'opacity-90 hover:opacity-100'}`}
                 />
+                <div className="pointer-events-none absolute left-1/2 top-full z-[80] hidden w-[170px] -translate-x-1/2 pt-3 group-hover:block group-focus-within:block">
+                  <div className="rounded-[14px] border border-[#3d352c] bg-[#fffaf1] px-3 py-2 text-center shadow-[0_12px_24px_rgba(52,39,24,0.12)]">
+                    <p className="font-mono-label text-[11px] tracking-[0.16em] text-foreground">{flower.name.toUpperCase()}</p>
+                    <p className="mt-1 text-xs text-foreground/80">{flower.symbolism}</p>
+                    <p className="mt-1 text-[11px] text-muted-foreground">Month: {flower.month}</p>
+                  </div>
+                </div>
                 <span className="absolute -bottom-8 font-mono-label text-[10px] text-muted-foreground whitespace-nowrap uppercase tracking-widest">
                   {flower.name}
                 </span>
@@ -230,14 +246,30 @@ const BouquetCreate = () => {
 
             {/* Wrapping */}
             <div>
-              <p className="font-mono-label text-muted-foreground mb-4">Premium Wrap</p>
+              <p className="font-mono-label text-muted-foreground mb-4">Wrapping Paper Design</p>
               <div className="flex flex-wrap gap-3">
-                {WRAPPING_PATTERNS.map((wp) => (
+                {WRAP_STYLES.map((wrapStyle) => (
                   <button
-                    key={wp.id}
-                    onClick={() => setBouquet((p) => ({ ...p, wrappingPattern: wp.id }))}
-                    className={`h-16 w-16 rounded-xl border-2 transition-all shadow-sm ${wp.preview} ${bouquet.wrappingPattern === wp.id ? 'border-foreground shadow-md scale-105' : 'border-transparent hover:scale-105 hover:shadow-md'}`}
-                    title={wp.name}
+                    key={wrapStyle.id}
+                    onClick={() => setBouquet((p) => ({ ...p, wrappingStyle: wrapStyle.id }))}
+                    className={`flex h-16 min-w-[86px] items-center justify-center rounded-xl border-2 px-4 transition-all shadow-sm ${wrapStyle.preview} ${(bouquet.wrappingStyle || 'cone') === wrapStyle.id ? 'border-foreground shadow-md scale-105' : 'border-transparent hover:scale-105 hover:shadow-md'}`}
+                    title={wrapStyle.name}
+                  >
+                    <span className="font-mono-label text-[11px] uppercase tracking-[0.16em] text-foreground/80">{wrapStyle.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="font-mono-label text-muted-foreground mb-4">Wrapping Paper Color</p>
+              <div className="flex flex-wrap gap-3">
+                {WRAP_COLORS.map((wrapColor) => (
+                  <button
+                    key={wrapColor.id}
+                    onClick={() => setBouquet((p) => ({ ...p, wrappingColor: wrapColor.id }))}
+                    className={`h-16 w-16 rounded-xl border-2 transition-all shadow-sm ${wrapColor.preview} ${(bouquet.wrappingColor || 'kraft') === wrapColor.id ? 'border-foreground shadow-md scale-105' : 'border-transparent hover:scale-105 hover:shadow-md'}`}
+                    title={wrapColor.name}
                   />
                 ))}
               </div>
@@ -307,6 +339,26 @@ const BouquetCreate = () => {
                 />
               )}
             </div>
+
+            <div className="pb-10">
+              <div className="mb-4">
+                <div className="flex items-center gap-2 text-warm-wine">
+                  <Sparkles className="h-4 w-4" />
+                  <p className="font-mono-label text-muted-foreground">Thought Behind The Bouquet</p>
+                </div>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  Tell them why you chose these flowers. This will appear with the bouquet as a quiet note about your intention.
+                </p>
+              </div>
+              <Textarea
+                value={bouquet.bouquetIntent}
+                onChange={(e) => setBouquet((prev) => ({ ...prev, bouquetIntent: e.target.value }))}
+                placeholder="I chose peonies for tenderness, roses for affection, and lavender because being around you feels calming..."
+                rows={5}
+                maxLength={320}
+                className="bg-white border-[#e8e0d5] rounded-xl resize-none p-5 shadow-sm focus-visible:ring-warm-wine/30"
+              />
+            </div>
           </div>
 
           {/* Canvas Area */}
@@ -347,6 +399,17 @@ const BouquetCreate = () => {
             </div>
 
             <div className="mt-8 text-center">
+              {selectedFlowerSummaries.length > 0 && (
+                <div className="mb-5 rounded-[24px] border border-[#eadfce] bg-white/90 px-5 py-4 text-left shadow-sm">
+                  <p className="font-mono-label text-[11px] tracking-[0.2em] text-warm-wine">BOUQUET LANGUAGE</p>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                    {selectedFlowerSummaries
+                      .slice(0, 4)
+                      .map((flower) => `${flower.name}: ${flower.symbolism}`)
+                      .join(' • ')}
+                  </p>
+                </div>
+              )}
               <Button
                 onClick={() => setShowPlanDialog(true)}
                 disabled={bouquet.placedFlowers.length === 0}
