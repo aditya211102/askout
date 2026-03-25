@@ -31,11 +31,85 @@ const products = [
     description: "Handpick watercolor blooms and wrap them into a bouquet that unfolds on screen.",
     route: "/bouquet/create",
     preview: (
-      <div className="w-full h-full bg-[hsl(40,33%,97%)] rounded-lg flex items-center justify-center p-4">
-        <div className="flex flex-wrap items-end justify-center gap-0 max-w-[160px]">
-          {["/flowers/red-rose.png", "/flowers/daisy.png", "/flowers/tulip.png", "/flowers/lavender.png", "/flowers/pink-rose.png"].map((src, i) => (
-            <img key={src} src={src} alt="" className="w-12 h-12 object-contain -mx-1" style={{ transform: `rotate(${(i - 2) * 14}deg)` }} />
-          ))}
+      <div className="relative h-full w-full overflow-hidden rounded-lg bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.96),rgba(247,241,234,0.98)_58%,rgba(241,232,221,1))] p-4">
+        <div className="pointer-events-none absolute inset-x-12 top-5 h-px bg-gradient-to-r from-transparent via-[#dccdb9] to-transparent opacity-70" />
+        <div className="pointer-events-none absolute left-1/2 top-8 h-24 w-24 -translate-x-1/2 rounded-full bg-[#f8e6d7] opacity-60 blur-2xl" />
+        <div className="pointer-events-none absolute left-1/2 top-[30px] h-[150px] w-[220px] -translate-x-1/2 rounded-[999px] border border-white/55" />
+
+        <div className="relative flex h-full items-center justify-center">
+          <div className="relative h-[210px] w-[230px]">
+            <img
+              src="/flowers/lavender.png"
+              alt=""
+              className="absolute left-[26px] top-[70px] h-[38px] w-[38px] object-contain opacity-85"
+              style={{ transform: "rotate(-14deg)" }}
+            />
+            <img
+              src="/flowers/pink-rose.png"
+              alt=""
+              className="absolute left-1/2 top-[18px] h-[72px] w-[72px] -translate-x-1/2 object-contain drop-shadow-[0_10px_16px_rgba(0,0,0,0.16)]"
+            />
+            <img
+              src="/flowers/daisy.png"
+              alt=""
+              className="absolute left-[66px] top-[48px] h-[66px] w-[66px] object-contain drop-shadow-[0_8px_12px_rgba(0,0,0,0.14)]"
+            />
+            <img
+              src="/flowers/tulip.png"
+              alt=""
+              className="absolute right-[38px] top-[46px] h-[62px] w-[62px] object-contain drop-shadow-[0_8px_12px_rgba(0,0,0,0.14)]"
+              style={{ transform: "rotate(10deg)" }}
+            />
+            <img
+              src="/flowers/white-rose.png"
+              alt=""
+              className="absolute left-[28px] top-[76px] h-[62px] w-[62px] object-contain drop-shadow-[0_8px_12px_rgba(0,0,0,0.14)]"
+              style={{ transform: "rotate(-10deg)" }}
+            />
+            <img
+              src="/flowers/pink-rose.png"
+              alt=""
+              className="absolute left-[82px] top-[88px] h-[62px] w-[62px] object-contain drop-shadow-[0_8px_12px_rgba(0,0,0,0.14)]"
+            />
+            <img
+              src="/flowers/white-rose.png"
+              alt=""
+              className="absolute right-[28px] top-[78px] h-[62px] w-[62px] object-contain drop-shadow-[0_8px_12px_rgba(0,0,0,0.14)]"
+              style={{ transform: "rotate(10deg)" }}
+            />
+            <div className="absolute left-[52px] top-[90px] h-[64px] w-[126px] rounded-[999px] bg-[radial-gradient(circle,rgba(160,180,150,0.28),rgba(160,180,150,0)_72%)] blur-md" />
+
+            <div className="absolute bottom-[14px] left-[28px] h-[108px] w-[176px] overflow-hidden">
+              <svg viewBox="0 0 176 108" className="h-full w-full drop-shadow-[0_18px_28px_rgba(57,42,27,0.2)]">
+                <defs>
+                  <linearGradient id="landingWrap" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#f9e1a6" />
+                    <stop offset="100%" stopColor="#e8bf54" />
+                  </linearGradient>
+                  <linearGradient id="landingWrapEdge" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="rgba(255,255,255,0.3)" />
+                    <stop offset="100%" stopColor="rgba(124,88,38,0.12)" />
+                  </linearGradient>
+                </defs>
+                <path d="M28 10 L148 10 Q160 40 138 102 L38 102 Q16 40 28 10 Z" fill="url(#landingWrap)" />
+                <path d="M20 16 L62 24 L48 104 L18 104 Q16 54 20 16 Z" fill="url(#landingWrapEdge)" opacity="0.65" />
+                <path d="M156 16 L114 24 L128 104 L158 104 Q160 54 156 16 Z" fill="url(#landingWrapEdge)" opacity="0.65" />
+                <path d="M28 10 L148 10 Q128 28 88 34 Q48 28 28 10 Z" fill="rgba(255,255,255,0.24)" />
+                <path d="M40 20 Q88 30 136 20" stroke="rgba(255,255,255,0.32)" strokeWidth="2" fill="none" />
+              </svg>
+            </div>
+
+            <svg
+              viewBox="0 0 96 44"
+              className="absolute bottom-[70px] left-1/2 h-[40px] w-[96px] -translate-x-1/2 drop-shadow-[0_8px_12px_rgba(91,55,43,0.22)]"
+            >
+              <path d="M48 20 Q38 36 28 42" stroke="#7d3140" strokeWidth="4" fill="none" strokeLinecap="round" />
+              <path d="M48 20 Q58 36 68 42" stroke="#7d3140" strokeWidth="4" fill="none" strokeLinecap="round" />
+              <ellipse cx="28" cy="16" rx="18" ry="10" fill="#8b4049" transform="rotate(-12 28 16)" />
+              <ellipse cx="68" cy="16" rx="18" ry="10" fill="#8b4049" transform="rotate(12 68 16)" />
+              <ellipse cx="48" cy="18" rx="8" ry="7" fill="#8b4049" />
+            </svg>
+          </div>
         </div>
       </div>
     ),

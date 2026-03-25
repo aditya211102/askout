@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
+import { Flower2, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import BouquetPreview from '@/components/BouquetPreview';
 import Envelope from '@/components/Envelope';
-import type { BouquetConfig } from '@/lib/bouquet-types';
+import { FLOWERS, type BouquetConfig } from '@/lib/bouquet-types';
 
 const BouquetViewer = () => {
   const { id } = useParams<{ id: string }>();
@@ -59,6 +60,10 @@ const BouquetViewer = () => {
       <div className="text-center"><p className="font-display text-2xl font-semibold mb-2">Not found</p><p className="text-muted-foreground text-sm font-mono-label">{error}</p></div>
     </div>
   );
+
+  const selectedFlowerSummaries = Array.from(new Set(bouquet.placedFlowers.map((flower) => flower.flowerId)))
+    .map((flowerId) => FLOWERS.find((flower) => flower.id === flowerId))
+    .filter((flower): flower is NonNullable<typeof flower> => Boolean(flower));
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-[#faf9f7] relative texture-grain overflow-hidden">
@@ -143,6 +148,40 @@ const BouquetViewer = () => {
                   <BouquetPreview bouquet={bouquet} senderName={senderName} recipientName={recipientName} />
                 </motion.div>
               </motion.div>
+
+              {(bouquet.bouquetIntent || selectedFlowerSummaries.length > 0) && (
+                <motion.div
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.34 }}
+                  className="mx-auto mt-8 grid max-w-4xl gap-4 md:grid-cols-[1.2fr,0.8fr]"
+                >
+                  <div className="rounded-[28px] border border-[#e8e0d5] bg-white/92 px-6 py-6 shadow-[0_18px_45px_rgba(54,36,23,0.06)]">
+                    <div className="flex items-center gap-2 text-warm-wine">
+                      <Sparkles className="h-4 w-4" />
+                      <p className="font-mono-label text-[11px] tracking-[0.2em]">THE THOUGHT BEHIND THIS BOUQUET</p>
+                    </div>
+                    <p className="mt-4 text-sm leading-relaxed text-foreground/80">
+                      {bouquet.bouquetIntent || 'Every flower here was chosen for how it feels, not just how it looks.'}
+                    </p>
+                  </div>
+
+                  <div className="rounded-[28px] border border-[#e8e0d5] bg-[#faf6f0] px-6 py-6 shadow-[0_18px_45px_rgba(54,36,23,0.05)]">
+                    <div className="flex items-center gap-2 text-warm-wine">
+                      <Flower2 className="h-4 w-4" />
+                      <p className="font-mono-label text-[11px] tracking-[0.2em]">FLOWER LANGUAGE</p>
+                    </div>
+                    <div className="mt-4 space-y-3">
+                      {selectedFlowerSummaries.slice(0, 4).map((flower) => (
+                        <div key={flower.id}>
+                          <p className="text-sm font-medium text-foreground">{flower.name}</p>
+                          <p className="text-xs leading-relaxed text-muted-foreground">{flower.symbolism}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
             </div>
           </motion.div>
         )}

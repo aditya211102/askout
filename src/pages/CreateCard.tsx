@@ -141,7 +141,7 @@ const CreateCard = () => {
           </motion.div>
         ) : (
           <motion.div key="preview" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="max-w-lg mx-auto px-6 py-12">
-            <p className="font-mono-label text-muted-foreground text-center mb-8">Preview — try clicking the buttons</p>
+            <p className="font-mono-label text-muted-foreground text-center mb-8">Preview - try clicking the buttons</p>
             <CardPreview card={card} interactive />
             <div className="flex items-center gap-4 mt-10 justify-center">
               <Button variant="outline" className="rounded-full px-8" onClick={() => setShowPreview(false)}>Edit</Button>
