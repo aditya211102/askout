@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { ArrowRight, User } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight, User, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -134,6 +134,49 @@ const products = [
     ),
   },
 ];
+
+const faqs = [
+  { q: "How does it work?", a: "Pick a product, customize it, and check out in seconds. You'll get a unique link to share with whoever you have in mind." },
+  { q: "Is it a one-time payment?", a: "Yes — no subscriptions, no hidden fees. You pay once per creation." },
+  { q: "Do they need an account to view it?", a: "No. The recipient just opens the link — no sign-up required on their end." },
+  { q: "Can I send it to anyone?", a: "Absolutely. Share the link however you like — text, DM, email, or even a QR code." },
+  { q: "What happens after they open it?", a: "You'll be able to see that it was opened from your dashboard. Their response (if any) is part of the experience you designed." },
+  { q: "Is my payment secure?", a: "Yes. Payments are processed via Stripe, so your card details never touch our servers." },
+];
+
+const FaqList = () => {
+  const [open, setOpen] = useState<number | null>(null);
+  return (
+    <div className="divide-y divide-border border border-border rounded-xl overflow-hidden">
+      {faqs.map((faq, i) => (
+        <motion.div key={i} initial={false}>
+          <button
+            className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-card/60 transition-colors"
+            onClick={() => setOpen(open === i ? null : i)}
+          >
+            <span className="font-medium text-sm">{faq.q}</span>
+            <ChevronDown
+              className={`w-4 h-4 text-muted-foreground shrink-0 ml-4 transition-transform duration-300 ${open === i ? "rotate-180" : ""}`}
+            />
+          </button>
+          <AnimatePresence initial={false}>
+            {open === i && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                className="overflow-hidden"
+              >
+                <p className="px-6 pb-5 text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      ))}
+    </div>
+  );
+};
 
 const Landing = () => {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -269,6 +312,59 @@ const Landing = () => {
             </motion.div>
           ))}
         </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="max-w-6xl mx-auto px-6 pb-24">
+        <div className="h-px bg-border mb-24" />
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-14"
+        >
+          <p className="font-mono-label text-muted-foreground/50 mb-2">TESTIMONIALS</p>
+          <h2 className="font-display text-3xl font-bold tracking-tight">What people are saying</h2>
+        </motion.div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {[
+            { quote: "Sent my crush an Ask Out Card and she said yes before I could even blink. Best $2 I've ever spent.", name: "Jordan M.", label: "Ask Out Cards" },
+            { quote: "The bouquet opened petal by petal and she literally started crying. Way more impact than sending flowers.", name: "Liam R.", label: "Digital Bouquets" },
+            { quote: "I recorded a 30-second voice note for my girlfriend's birthday and she's listened to it like 20 times. It's her favorite gift.", name: "Priya K.", label: "Voice Notes" },
+          ].map((t, i) => (
+            <motion.div
+              key={t.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1, duration: 0.5 }}
+              className="bg-card border border-border rounded-xl p-6 flex flex-col gap-4"
+            >
+              <p className="text-foreground/80 text-sm leading-relaxed italic">"{t.quote}"</p>
+              <div className="mt-auto">
+                <p className="font-medium text-sm">{t.name}</p>
+                <p className="font-mono-label text-warm-wine text-xs mt-0.5">{t.label}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="max-w-6xl mx-auto px-6 pb-32">
+        <div className="h-px bg-border mb-24" />
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="mb-14"
+        >
+          <p className="font-mono-label text-muted-foreground/50 mb-2">FAQ</p>
+          <h2 className="font-display text-3xl font-bold tracking-tight">Questions answered</h2>
+        </motion.div>
+        <FaqList />
       </section>
 
       <footer className="border-t border-border py-8 px-6">
