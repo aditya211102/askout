@@ -3,14 +3,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, User, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import Seo from "@/components/Seo";
 import { supabase } from "@/integrations/supabase/client";
+import { SITE_DESCRIPTION, SITE_KEYWORDS, SITE_NAME } from "@/lib/site";
 
 const products = [
   {
     title: "Ask Out Cards",
     label: "CARDS",
     number: "01",
-    description: "A playful card with a trick \"No\" button. They literally can't say no.",
+    description: "A playful digital card for couples with a trick \"No\" button and a reveal worth sharing.",
     route: "/askout/create",
     preview: (
       <div className="w-full h-full bg-gradient-to-br from-rose-100 to-pink-200 rounded-lg flex items-center justify-center p-6">
@@ -28,7 +30,7 @@ const products = [
     title: "Digital Bouquets",
     label: "BOUQUETS",
     number: "02",
-    description: "Handpick watercolor blooms and wrap them into a bouquet that unfolds on screen.",
+    description: "Build a personalized digital bouquet and send it as a link for anniversaries, birthdays, or just because.",
     route: "/bouquet/create",
     preview: (
       <div className="relative h-full w-full overflow-hidden rounded-lg bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.96),rgba(247,241,234,0.98)_58%,rgba(241,232,221,1))] p-4">
@@ -118,7 +120,7 @@ const products = [
     title: "Voice Notes",
     label: "VOICE",
     number: "03",
-    description: "Record a heartfelt message. Delivered on a warm journal with a waveform.",
+    description: "Turn a heartfelt recording into a voice note gift with a warm reveal your person can replay anytime.",
     route: "/voice/create",
     preview: (
       <div className="w-full h-full bg-[hsl(30,20%,18%)] rounded-lg flex flex-col items-center justify-center p-4">
@@ -136,12 +138,30 @@ const products = [
 ];
 
 const faqs = [
-  { q: "How does it work?", a: "Pick a product, customize it, and check out in seconds. You'll get a unique link to share with whoever you have in mind." },
-  { q: "Is it a one-time payment?", a: "Yes — no subscriptions, no hidden fees. You pay once per creation." },
-  { q: "Do they need an account to view it?", a: "No. The recipient just opens the link — no sign-up required on their end." },
-  { q: "Can I send it to anyone?", a: "Absolutely. Share the link however you like — text, DM, email, or even a QR code." },
-  { q: "What happens after they open it?", a: "You'll be able to see that it was opened from your dashboard. Their response (if any) is part of the experience you designed." },
-  { q: "Is my payment secure?", a: "Yes. Payments are processed via Stripe, so your card details never touch our servers." },
+  {
+    q: "What is Askout Moments?",
+    a: "Askout Moments is a digital gifting platform where you can create personalized bouquets, ask-out cards, and voice note gifts, then send them as a shareable link.",
+  },
+  {
+    q: "How do I send a digital bouquet?",
+    a: "Choose your flowers, wrap, ribbon, and note, then check out and share the link. Your person opens it in the browser and sees the bouquet reveal on screen.",
+  },
+  {
+    q: "Is it available in India?",
+    a: "Yes. Askout Moments is available in India and works especially well when you want a fast digital gift without shipping delays.",
+  },
+  {
+    q: "Do I need to download anything?",
+    a: "No. Everything works in the browser, so the recipient only needs to open the link you send.",
+  },
+  {
+    q: "What occasions is it good for?",
+    a: "It works for birthdays, anniversaries, Valentine's Day, long distance relationship gifts, or a simple just-because surprise.",
+  },
+  {
+    q: "What can I create here?",
+    a: "You can build an ask-out card, a digital bouquet, or a voice note gift, so it fits playful reveals and more heartfelt moments too.",
+  },
 ];
 
 const FaqList = () => {
@@ -182,6 +202,35 @@ const Landing = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const navigate = useNavigate();
 
+  const softwareSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: SITE_NAME,
+    description: "A digital gifting platform for couples. Send personalized bouquets, cards, and voice notes as a shareable link.",
+    applicationCategory: "LifestyleApplication",
+    operatingSystem: "Web",
+    url: "https://askout-moments.vercel.app/",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "INR",
+    },
+    keywords: SITE_KEYWORDS,
+  };
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.a,
+      },
+    })),
+  };
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setLoggedIn(!!session);
@@ -190,10 +239,18 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-background relative texture-grain">
+      <Seo
+        title={`${SITE_NAME} | Digital Bouquets, Cards and Voice Gifts for Couples`}
+        description={SITE_DESCRIPTION}
+        keywords={SITE_KEYWORDS}
+        path="/"
+        jsonLd={[softwareSchema, faqSchema]}
+      />
+
       <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-5">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <button onClick={() => navigate('/')} className="text-left">
-            <span className="font-display text-lg font-semibold text-foreground">ShareMoments</span>
+          <button onClick={() => navigate("/")} className="text-left">
+            <span className="font-display text-lg font-semibold text-foreground">Askout Moments</span>
             <span className="block font-mono-label text-muted-foreground/70 mt-1">Digital moments, beautifully crafted</span>
           </button>
 
@@ -232,13 +289,11 @@ const Landing = () => {
           <h1 className="font-display text-5xl sm:text-6xl md:text-[5.5rem] font-bold leading-[0.95] tracking-tight mb-8">
             Turn feelings into
             <br />
-            <span className="font-display italic font-normal text-warm-wine">
-              unforgettable
-            </span>{" "}
+            <span className="font-display italic font-normal text-warm-wine">unforgettable</span>{" "}
             moments
           </h1>
           <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-12">
-            Three thoughtful formats for sharing something personal, playful, or heartfelt without making it feel generic.
+            Create a personalized gift for couples, from a digital bouquet to a voice note gift, and send a gift as a link in seconds. It is a thoughtful fit for anniversaries, long-distance relationships, and meaningful surprises across India.
           </p>
           <Button
             onClick={() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth" })}
@@ -255,6 +310,20 @@ const Landing = () => {
       </div>
 
       <section id="products" className="max-w-6xl mx-auto px-6 py-24 scroll-mt-8">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="max-w-3xl mb-12"
+        >
+          <p className="font-mono-label text-muted-foreground/50 mb-2">DIGITAL GIFTS</p>
+          <h2 className="font-display text-3xl font-bold tracking-tight mb-4">Three ways to make one person feel seen</h2>
+          <p className="text-muted-foreground leading-relaxed">
+            Whether you need a long distance relationship gift, an anniversary gift online, or a fast digital gift in India that still feels personal, Askout Moments keeps the experience intimate from first click to final reveal.
+          </p>
+        </motion.div>
+
         <div className="grid md:grid-cols-3 gap-6">
           {products.map((product, i) => (
             <motion.div
@@ -295,9 +364,9 @@ const Landing = () => {
         <div className="h-px bg-border mb-24" />
         <div className="grid md:grid-cols-3 gap-16">
           {[
-            { num: "01", title: "Choose & customize", body: "Pick a product and personalize every detail to make it yours." },
-            { num: "02", title: "Quick checkout", body: "A simple one-time checkout with no subscriptions or clutter." },
-            { num: "03", title: "Share the link", body: "Send it to someone special and watch the magic unfold." },
+            { num: "01", title: "Choose and customize", body: "Pick the format that fits the moment and tailor every detail so it feels like a real personalized gift for couples, not a template." },
+            { num: "02", title: "Quick checkout", body: "Finish in a couple of minutes with a simple one-time payment and no shipping, waiting, or extra app installs." },
+            { num: "03", title: "Send a gift as a link", body: "Share it over chat, DM, or text and let the reveal land instantly, whether they are nearby or far away." },
           ].map((step, i) => (
             <motion.div
               key={step.num}
@@ -314,7 +383,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Testimonials */}
       <section className="max-w-6xl mx-auto px-6 pb-24">
         <div className="h-px bg-border mb-24" />
         <motion.div
@@ -331,7 +399,7 @@ const Landing = () => {
           {[
             { quote: "Sent my crush an Ask Out Card and she said yes before I could even blink. Best $2 I've ever spent.", name: "Jordan M.", label: "Ask Out Cards" },
             { quote: "The bouquet opened petal by petal and she literally started crying. Way more impact than sending flowers.", name: "Liam R.", label: "Digital Bouquets" },
-            { quote: "I recorded a 30-second voice note for my girlfriend's birthday and she's listened to it like 20 times. It's her favorite gift.", name: "Priya K.", label: "Voice Notes" },
+            { quote: "I recorded a 30-second voice note for my girlfriend's birthday and she's listened to it like 20 times. It became her favorite anniversary gift online.", name: "Priya K.", label: "Voice Notes" },
           ].map((t, i) => (
             <motion.div
               key={t.name}
@@ -351,7 +419,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* FAQ */}
       <section className="max-w-6xl mx-auto px-6 pb-32">
         <div className="h-px bg-border mb-24" />
         <motion.div
@@ -369,8 +436,8 @@ const Landing = () => {
 
       <footer className="border-t border-border py-8 px-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <span className="font-display text-sm text-muted-foreground">ShareMoments</span>
-          <span className="font-mono-label text-muted-foreground/60">© 2026</span>
+          <span className="font-display text-sm text-muted-foreground">Askout Moments</span>
+          <span className="font-mono-label text-muted-foreground/60">(c) 2026</span>
         </div>
       </footer>
     </div>

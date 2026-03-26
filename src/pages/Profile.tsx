@@ -63,7 +63,7 @@ const Profile = () => {
       <header className="border-b border-border">
         <div className="max-w-4xl mx-auto px-6 py-5 flex items-center justify-between">
           <button onClick={() => navigate('/')} className="font-display text-lg font-semibold text-foreground">
-            ShareMoments
+            Askout Moments
           </button>
           <div className="flex items-center gap-4">
             <span className="text-xs text-muted-foreground hidden sm:block">{email}</span>

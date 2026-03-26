@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import RouteSeo from "./components/RouteSeo";
 import Landing from "./pages/Landing";
 import CreateCard from "./pages/CreateCard";
 import CardViewer from "./pages/CardViewer";
@@ -25,6 +26,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <RouteSeo />
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/askout/create" element={<CreateCard />} />

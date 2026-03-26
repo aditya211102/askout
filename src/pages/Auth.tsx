@@ -54,7 +54,7 @@ const Auth = () => {
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-sm">
         <div className="text-center mb-10">
           <button onClick={() => navigate('/')} className="font-display text-xl font-semibold text-foreground">
-            ShareMoments
+            Askout Moments
           </button>
         </div>
 
