@@ -5,7 +5,7 @@ import { SITE_DESCRIPTION, SITE_KEYWORDS, SITE_NAME } from "@/lib/site";
 const RouteSeo = () => {
   const { pathname } = useLocation();
 
-  if (pathname === "/") {
+  if (pathname === "/" || pathname.startsWith("/ideas")) {
     return null;
   }
 

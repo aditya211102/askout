@@ -17,6 +17,9 @@ import Checkout from "./pages/Checkout";
 import Auth from "./pages/Auth";
 import Success from "./pages/Success";
 import NotFound from "./pages/NotFound";
+import IdeasHome from "./pages/ideas/IdeasHome";
+import IdeasCategory from "./pages/ideas/IdeasCategory";
+import IdeasRouter from "./pages/ideas/IdeasRouter";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +32,9 @@ const App = () => (
         <RouteSeo />
         <Routes>
           <Route path="/" element={<Landing />} />
+          <Route path="/ideas" element={<IdeasHome />} />
+          <Route path="/ideas/category/:category" element={<IdeasCategory />} />
+          <Route path="/ideas/:slug" element={<IdeasRouter />} />
           <Route path="/askout/create" element={<CreateCard />} />
           <Route path="/create" element={<CreateCard />} />
           <Route path="/bouquet/create" element={<BouquetCreate />} />

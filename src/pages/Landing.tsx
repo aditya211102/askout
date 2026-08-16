@@ -254,7 +254,13 @@ const Landing = () => {
             <span className="block font-mono-label text-muted-foreground/70 mt-1">Digital moments, beautifully crafted</span>
           </button>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <button
+              onClick={() => navigate("/ideas")}
+              className="font-mono-label text-muted-foreground hover:text-warm-wine transition-colors"
+            >
+              Ideas
+            </button>
             {loggedIn && (
               <button
                 onClick={() => navigate("/profile")}

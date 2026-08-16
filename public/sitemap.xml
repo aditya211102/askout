@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://askout-moments.vercel.app/</loc>
+    <loc>https://askout-moments.vercel.app</loc>
     <priority>1.0</priority>
   </url>
   <url>
@@ -15,5 +15,101 @@
   <url>
     <loc>https://askout-moments.vercel.app/voice/create</loc>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/birthday</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/anniversary</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/love-letters</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/long-distance</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/romantic-gifts</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/proposals</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/date-ideas</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/special-occasions</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/birthday-surprise-ideas-for-girlfriend</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/birthday-surprise-ideas-for-boyfriend</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/anniversary-surprise-ideas</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/long-distance-relationship-gift-ideas</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/romantic-gifts-for-girlfriend</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/romantic-gifts-for-boyfriend</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/digital-gift-ideas-for-someone-you-love</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/how-to-write-a-love-letter</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/romantic-love-letter-examples</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/cute-birthday-messages-for-girlfriend</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/anniversary-messages-for-partner</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/proposal-ideas-for-couples</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/long-distance-date-ideas</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/cute-ways-to-surprise-your-partner</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://askout-moments.vercel.app/ideas/how-to-make-someone-feel-special</loc>
+    <priority>0.7</priority>
   </url>
 </urlset>
