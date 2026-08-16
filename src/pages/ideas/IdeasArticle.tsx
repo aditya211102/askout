@@ -249,7 +249,7 @@ export const IdeasArticle = () => {
         )}
 
         {/* Article Body */}
-        <div className={`lg:col-span-${article.sections.length > 1 ? "8" : "12"} lg:order-1`}>
+        <div className={article.sections.length > 1 ? "lg:col-span-8 lg:order-1" : "lg:col-span-12"}>
           {/* Introduction */}
           <div className="text-lg sm:text-xl text-foreground/90 font-normal leading-relaxed mb-10 pb-8 border-b border-border/60 italic font-display">
             "{article.intro}"
