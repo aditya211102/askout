@@ -1,4 +1,4 @@
-import { useParams } from "react";
+import { useParams } from "react-router-dom";
 import IdeasCategory from "./IdeasCategory";
 import IdeasArticle from "./IdeasArticle";
 import NotFound from "@/pages/NotFound";
