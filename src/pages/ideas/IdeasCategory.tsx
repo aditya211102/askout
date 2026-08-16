@@ -12,17 +12,18 @@ import { trackCategoryView } from "@/lib/ideasAnalytics";
 import { SITE_URL } from "@/lib/site";
 
 export const IdeasCategory = () => {
-  const { category: categoryParam } = useParams<{ category: string }>();
+  const { category: categoryParam, slug: slugParam } = useParams<{ category?: string; slug?: string }>();
   const navigate = useNavigate();
 
-  const category = getCategoryBySlug(categoryParam || "");
-  const articles = getArticlesByCategory(categoryParam || "");
+  const targetCategorySlug = categoryParam || slugParam || "";
+  const category = getCategoryBySlug(targetCategorySlug);
+  const articles = getArticlesByCategory(targetCategorySlug);
 
   useEffect(() => {
-    if (categoryParam) {
-      trackCategoryView(categoryParam);
+    if (targetCategorySlug) {
+      trackCategoryView(targetCategorySlug);
     }
-  }, [categoryParam]);
+  }, [targetCategorySlug]);
 
   if (!category) {
     return (
