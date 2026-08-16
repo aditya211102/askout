@@ -14,6 +14,7 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const handlePostLogin = useCallback(() => {
     if (localStorage.getItem('pendingCard')) navigate('/checkout');
@@ -33,14 +34,20 @@ const Auth = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
     try {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       } else {
-        const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin } });
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: `${window.location.origin}/auth` },
+        });
         if (error) throw error;
+        setSuccess('Account created. Check your email to confirm your address, then sign in.');
       }
     } catch (err) {
       setError(err instanceof AuthError ? err.message : 'Something went wrong');
@@ -78,6 +85,7 @@ const Auth = () => {
               <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="pl-10 bg-transparent" required minLength={6} />
             </div>
             {error && <p className="text-sm text-destructive text-center">{error}</p>}
+            {success && <p className="text-sm text-emerald-700 text-center">{success}</p>}
             <Button type="submit" className="w-full rounded-full bg-foreground text-background" disabled={loading}>
               {loading ? '...' : isLogin ? 'Sign In' : 'Sign Up'}
             </Button>
@@ -89,7 +97,7 @@ const Auth = () => {
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             {isLogin ? "Don't have an account?" : 'Already have one?'}{' '}
-            <button onClick={() => { setIsLogin(!isLogin); setError(''); }} className="text-foreground font-medium hover:underline">
+            <button onClick={() => { setIsLogin(!isLogin); setError(''); setSuccess(''); }} className="text-foreground font-medium hover:underline">
               {isLogin ? 'Sign up' : 'Sign in'}
             </button>
           </p>
