@@ -15,14 +15,15 @@ const categorySlugs = categorySlugsMatches.map((m) => m[1]);
 
 // Extract articles from file
 const articlesFile = fs.readFileSync(path.join(rootDir, "src/data/ideas/articles.ts"), "utf-8");
-const articleSlugsMatches = [...articlesFile.matchAll(/slug:\s*"([^"]+)"/g)];
-const articleSlugs = articleSlugsMatches.map((m) => m[1]);
+const articleMatches = [...articlesFile.matchAll(/slug:\s*"([^"]+)"[\s\S]*?updatedAt:\s*"([^"]+)"/g)];
+const articles = articleMatches.map((m) => ({ slug: m[1], lastmod: m[2] }));
 
 const staticPages = [
   { url: "", priority: "1.0" },
   { url: "/askout/create", priority: "0.8" },
   { url: "/bouquet/create", priority: "0.8" },
   { url: "/voice/create", priority: "0.8" },
+  { url: "/about", priority: "0.5" },
   { url: "/ideas", priority: "0.9" },
 ];
 
@@ -31,9 +32,10 @@ const categoryPages = categorySlugs.map((slug) => ({
   priority: "0.8",
 }));
 
-const articlePages = articleSlugs.map((slug) => ({
-  url: `/ideas/${slug}`,
+const articlePages = articles.map((article) => ({
+  url: `/ideas/${article.slug}`,
   priority: "0.7",
+  lastmod: article.lastmod,
 }));
 
 const allPages = [...staticPages, ...categoryPages, ...articlePages];
@@ -44,7 +46,7 @@ ${allPages
   .map(
     (page) => `  <url>
     <loc>${siteUrl}${page.url}</loc>
-    <priority>${page.priority}</priority>
+    <priority>${page.priority}</priority>${page.lastmod ? `\n    <lastmod>${page.lastmod}</lastmod>` : ""}
   </url>`
   )
   .join("\n")}

@@ -1,6 +1,18 @@
 {
   "rewrites": [
     {
+      "source": "/ideas",
+      "destination": "/ideas/index.html"
+    },
+    {
+      "source": "/ideas/:path*",
+      "destination": "/ideas/:path*/index.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/about/index.html"
+    },
+    {
       "source": "/((?!.*\\.).*)",
       "destination": "/index.html"
     }

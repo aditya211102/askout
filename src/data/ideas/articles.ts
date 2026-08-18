@@ -41,7 +41,7 @@ export interface Article {
 export const ARTICLES: Article[] = [
   {
     slug: "birthday-surprise-ideas-for-girlfriend",
-    title: "25 Birthday Surprise Ideas for Your Girlfriend That Feel Genuinely Personal",
+    title: "25 Personal Birthday Surprise Ideas for Your Girlfriend",
     description: "Looking for birthday surprise ideas for your girlfriend? Explore 25 thoughtful, romantic, and creative ideas ranging from digital keepsakes to intimate experiences.",
     category: "birthday",
     author: "AskOut Editorial Team",
@@ -55,16 +55,16 @@ export const ARTICLES: Article[] = [
       {
         id: "digital-surprises",
         heading: "1. Digital & Distance-Friendly Surprises",
-        content: "If you are apart or want to kick off her morning with instant magic right when she wakes up, digital gestures create immediate delight before any physical celebration begins.",
+        content: "If you are apart, or want to start her day with something personal, digital gestures can arrive before the in-person celebration begins.",
         items: [
           "Send a custom digital bouquet that reveals blossom by blossom with a personalized letter.",
           "Curate a 12-song playlist where each track represents a specific memory from your relationship.",
-          "Record a secret voice note gift expressing what you admire most about her over the past year.",
+          "Record a voice note sharing what you have admired most about her over the past year.",
           "Create a digital scavenger hunt with clues hidden across her favorite websites or photos.",
           "Schedule surprise text messages throughout the day at times matching her birth date (e.g., 9:15 AM for Sept 15)."
         ],
         callout: {
-          text: "Want to turn a digital message into a memory she can keep forever? Build a personalized bouquet or card in under 2 minutes.",
+          text: "Want to turn a message into a keepsake? Build a personalized bouquet or card in a few minutes.",
           ctaLabel: "Create a Birthday Surprise →",
           ctaLink: "/bouquet/create"
         }
@@ -78,7 +78,7 @@ export const ARTICLES: Article[] = [
           "Leave handwritten sticky notes in hidden spots—inside her jacket pocket, mirror frame, or book.",
           "Upgrade an everyday item she uses constantly (like a cozy throw blanket or ceramic mug).",
           "Deliver flowers to her workspace with a handwritten card instead of an anonymous receipt.",
-          "Recreate her dream morning routine with relaxing music, aromatic tea, and zero chores."
+          "Recreate her ideal morning routine with relaxing music, aromatic tea, and a clear plan for the chores."
         ]
       },
       {
@@ -90,7 +90,7 @@ export const ARTICLES: Article[] = [
           "Host an intimate backyard picnic with fairy lights, her favorite wine, and cozy cushions.",
           "Plan a surprise day trip to a nearby town or scenic viewpoint she's been saving on Instagram.",
           "Book a private workshop together—like pottery making, candle crafting, or pasta cooking.",
-          "Organize a secret sunset viewing with a pre-packed basket of artisanal snacks."
+          "Plan a sunset picnic with a pre-packed basket of snacks she actually enjoys."
         ]
       },
       {
@@ -100,7 +100,7 @@ export const ARTICLES: Article[] = [
         items: [
           "Assemble an open-when letter bundle (Open when you're stressed, Open when you miss me).",
           "Commission a custom illustration of your favorite photo together.",
-          "Frame a high-quality print of the night sky or star constellation on the day you met.",
+          "Frame a custom star map showing the night sky on the day you met.",
           "Compile a video montage with video messages from her closest friends and family.",
           "Gift a piece of birthstone jewelry with a subtle engraved date or initial."
         ]
@@ -109,7 +109,7 @@ export const ARTICLES: Article[] = [
     faq: [
       {
         question: "How can I surprise my girlfriend on a budget?",
-        answer: "Focus on sentimental gestures. A personalized digital bouquet, a heartfelt handwritten love letter, or recreating your first date at home costs very little but leaves a huge emotional impact."
+        answer: "Focus on details that show you notice her. A personalized digital bouquet, a handwritten letter, or a first-date dinner at home can feel more meaningful than an expensive generic gift."
       },
       {
         question: "What is a good morning birthday surprise?",
@@ -150,11 +150,11 @@ export const ARTICLES: Article[] = [
           "Send him an interactive Ask-Out card asking him on a secret birthday date night.",
           "Set up a retro game tournament or game night featuring his childhood favorites and specialty snacks.",
           "Organize a clue-based treasure hunt around his apartment leading to his main gift.",
-          "Kidnap him for an unexpected weekend road trip without revealing the location until you arrive.",
+          "Plan a surprise weekend road trip, making sure he has agreed to keep the dates free and knows what to pack.",
           "Order a custom cake decorated with inside jokes or his favorite pop culture reference."
         ],
         callout: {
-          text: "Plan a surprise date with a playful interactive card that forces him to click 'Yes!'.",
+          text: "Plan a surprise date with a playful interactive card that invites him to say yes.",
           ctaLabel: "Build an Ask-Out Card →",
           ctaLink: "/create"
         }
@@ -162,10 +162,10 @@ export const ARTICLES: Article[] = [
       {
         id: "relaxed-ideas",
         heading: "2. Relaxed & Low-Key Experiences",
-        content: "Not every guy wants a big party. Often, dedicated quality time is the ultimate gift.",
+        content: "Not everyone wants a big party. For many people, protected quality time is the most thoughtful gift.",
         items: [
           "Host an intimate movie marathon complete with theater-style popcorn, snacks, and no interruptions.",
-          "Cook his ultimate favorite comfort meal from scratch with candlelit ambiance.",
+          "Cook his favourite comfort meal from scratch and set the table for an unrushed evening.",
           "Book a relaxing couple's massage or create a soothing spa night at home.",
           "Take him to a live sporting event or concert featuring his favorite team or band.",
           "Plan a craft beer or whiskey tasting session at home with curated tasting notes."
@@ -206,7 +206,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "anniversary-surprise-ideas",
     title: "18 Romantic Anniversary Surprise Ideas for Couples (Local & Distance)",
-    description: "Celebrate your love anniversary with 18 romantic surprise ideas. From nostalgic memory strolls to digital keepsakes, make your milestone unforgettable.",
+    description: "Celebrate your anniversary with 18 romantic surprise ideas, from nostalgic memory walks to personal digital keepsakes.",
     category: "anniversary",
     author: "AskOut Editorial Team",
     publishedAt: "2026-02-14",
@@ -290,7 +290,7 @@ export const ARTICLES: Article[] = [
           "Design a digital countdown card leading up to your next visit date."
         ],
         callout: {
-          text: "Send your partner a digital bouquet or voice note right now—no shipping fees, no waiting.",
+          text: "Send your partner a digital bouquet or voice note when distance or timing makes a physical gift difficult.",
           ctaLabel: "Send Instant Digital Gift →",
           ctaLink: "/bouquet/create"
         }
@@ -343,7 +343,7 @@ export const ARTICLES: Article[] = [
       {
         id: "meaningful-tokens",
         heading: "1. Emotional & Sentimental Gifts",
-        content: "Gifts that evoke shared memories always win her heart.",
+        content: "Gifts that recall a shared memory often feel more personal than a generic present.",
         items: [
           "A personalized digital bouquet featuring her favorite flower types and a hidden letter.",
           "A custom lock-and-key bracelet or delicate necklace with your anniversary date.",
@@ -658,7 +658,7 @@ export const ARTICLES: Article[] = [
     faq: [
       {
         question: "What should I write in my girlfriend's birthday text morning?",
-        answer: "A sweet morning message like 'Happy Birthday my love! I hope today is as bright and wonderful as your smile' paired with a digital card link makes her morning instant perfection."
+        answer: "Pair a warm, specific message with a card link. For example: 'Happy birthday, my love. I hope today includes your favourite coffee, a slow morning, and one excellent surprise.'"
       }
     ],
     relatedSlugs: [
@@ -725,7 +725,7 @@ export const ARTICLES: Article[] = [
 
   {
     slug: "proposal-ideas-for-couples",
-    title: "15 Unforgettable Proposal Ideas for Every Couple (Creative & Intimate)",
+    title: "15 Personal Proposal Ideas for Couples (Creative & Intimate)",
     description: "Explore 15 creative, intimate, and romantic proposal ideas. From private outdoor setups to digital ask-out card reveals, pop the question in style.",
     category: "proposals",
     author: "AskOut Editorial Team",

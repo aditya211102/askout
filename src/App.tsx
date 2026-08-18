@@ -20,6 +20,7 @@ import NotFound from "./pages/NotFound";
 import IdeasHome from "./pages/ideas/IdeasHome";
 import IdeasCategory from "./pages/ideas/IdeasCategory";
 import IdeasRouter from "./pages/ideas/IdeasRouter";
+import About from "./pages/About";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/ideas" element={<IdeasHome />} />
           <Route path="/ideas/category/:category" element={<IdeasCategory />} />
           <Route path="/ideas/:slug" element={<IdeasRouter />} />
+          <Route path="/about" element={<About />} />
           <Route path="/askout/create" element={<CreateCard />} />
           <Route path="/create" element={<CreateCard />} />
           <Route path="/bouquet/create" element={<BouquetCreate />} />

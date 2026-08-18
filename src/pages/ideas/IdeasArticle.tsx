@@ -34,7 +34,7 @@ export const IdeasArticle = () => {
       trackArticleView(article.slug, article.title);
       window.scrollTo(0, 0);
     }
-  }, [article?.slug]);
+  }, [article]);
 
   if (!article) {
     return (

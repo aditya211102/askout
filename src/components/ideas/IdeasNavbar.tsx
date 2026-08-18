@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { Sparkles, ArrowRight, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,14 +26,14 @@ export const IdeasNavbar = () => {
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Brand Logo & Editorial Badge */}
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate("/")} className="text-left group flex items-center gap-2">
+          <Link to="/" className="text-left group flex items-center gap-2">
             <span className="font-display text-xl font-bold text-foreground group-hover:text-warm-wine transition-colors">
               Askout
             </span>
-          </button>
+          </Link>
           <div className="hidden sm:flex items-center gap-2 border-l border-border pl-4">
-            <button
-              onClick={() => navigate("/ideas")}
+            <Link
+              to="/ideas"
               className={`font-mono-label px-2.5 py-1 rounded-full text-[11px] transition-colors ${
                 location.pathname === "/ideas"
                   ? "bg-warm-wine/10 text-warm-wine font-semibold"
@@ -41,14 +41,14 @@ export const IdeasNavbar = () => {
               }`}
             >
               IDEAS HUB
-            </button>
+            </Link>
           </div>
         </div>
 
         {/* Links & CTA */}
         <nav className="flex items-center gap-4">
-          <button
-            onClick={() => navigate("/ideas")}
+          <Link
+            to="/ideas"
             className={`text-sm font-medium transition-colors hidden sm:block ${
               location.pathname.startsWith("/ideas")
                 ? "text-warm-wine font-semibold"
@@ -56,7 +56,7 @@ export const IdeasNavbar = () => {
             }`}
           >
             Ideas
-          </button>
+          </Link>
 
           <Button
             onClick={handleCreateClick}
