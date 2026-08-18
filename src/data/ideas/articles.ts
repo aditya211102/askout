@@ -41,7 +41,7 @@ export interface Article {
 export const ARTICLES: Article[] = [
   {
     slug: "birthday-surprise-ideas-for-girlfriend",
-    title: "25 Personal Birthday Surprise Ideas for Your Girlfriend",
+    title: "20 Personal Birthday Surprise Ideas for Your Girlfriend",
     description: "Looking for birthday surprise ideas for your girlfriend? Explore 25 thoughtful, romantic, and creative ideas ranging from digital keepsakes to intimate experiences.",
     category: "birthday",
     author: "AskOut Editorial Team",
@@ -131,7 +131,7 @@ export const ARTICLES: Article[] = [
 
   {
     slug: "birthday-surprise-ideas-for-boyfriend",
-    title: "20 Birthday Surprise Ideas for Your Boyfriend That He'll Actually Love",
+    title: "15 Birthday Surprise Ideas for Your Boyfriend That He'll Actually Love",
     description: "Discover 20 creative, fun, and meaningful birthday surprise ideas for your boyfriend. From unexpected experiences to thoughtful digital gifts.",
     category: "birthday",
     author: "AskOut Editorial Team",
@@ -205,7 +205,7 @@ export const ARTICLES: Article[] = [
 
   {
     slug: "anniversary-surprise-ideas",
-    title: "18 Romantic Anniversary Surprise Ideas for Couples (Local & Distance)",
+    title: "10 Romantic Anniversary Surprise Ideas for Couples (Local & Distance)",
     description: "Celebrate your anniversary with 18 romantic surprise ideas, from nostalgic memory walks to personal digital keepsakes.",
     category: "anniversary",
     author: "AskOut Editorial Team",
@@ -267,7 +267,7 @@ export const ARTICLES: Article[] = [
 
   {
     slug: "long-distance-relationship-gift-ideas",
-    title: "15 Thoughtful Long Distance Relationship Gift Ideas That Bridge the Gap",
+    title: "10 Thoughtful Long Distance Relationship Gift Ideas That Bridge the Gap",
     description: "Discover 15 meaningful long-distance relationship gift ideas. Send instant digital surprises, voice notes, personalized keepsakes, and physical reminders.",
     category: "long-distance",
     author: "AskOut Editorial Team",
@@ -329,7 +329,7 @@ export const ARTICLES: Article[] = [
 
   {
     slug: "romantic-gifts-for-girlfriend",
-    title: "22 Meaningful & Romantic Gifts for Your Girlfriend She'll Treasure",
+    title: "9 Meaningful & Romantic Gifts for Your Girlfriend She'll Treasure",
     description: "Explore 22 meaningful romantic gifts for your girlfriend. Unique ideas ranging from personalized digital tokens to elegant keepsakes.",
     category: "romantic-gifts",
     author: "AskOut Editorial Team",
@@ -390,7 +390,7 @@ export const ARTICLES: Article[] = [
 
   {
     slug: "romantic-gifts-for-boyfriend",
-    title: "16 Unique Romantic Gifts for Your Boyfriend That Show You Care",
+    title: "9 Unique Romantic Gifts for Your Boyfriend That Show You Care",
     description: "Looking for romantic gifts for your boyfriend? Discover 16 practical, sentimental, and creative ideas he will genuinely appreciate.",
     category: "romantic-gifts",
     author: "AskOut Editorial Team",
@@ -568,7 +568,7 @@ export const ARTICLES: Article[] = [
 
   {
     slug: "romantic-love-letter-examples",
-    title: "10 Romantic Love Letter Examples for Every Relationship Stage",
+    title: "3 Romantic Love Letter Examples for Every Relationship Stage",
     description: "Read 10 beautiful romantic love letter examples for anniversary, long distance, birthday, proposals, and quiet everyday moments.",
     category: "love-letters",
     author: "AskOut Editorial Team",
@@ -616,7 +616,7 @@ export const ARTICLES: Article[] = [
 
   {
     slug: "cute-birthday-messages-for-girlfriend",
-    title: "35 Cute & Emotional Birthday Messages for Your Girlfriend",
+    title: "8 Cute & Emotional Birthday Messages for Your Girlfriend",
     description: "Find 35 cute, romantic, funny, and emotional birthday messages for your girlfriend. Copy and paste or customize for cards, texts, and gifts.",
     category: "birthday",
     author: "AskOut Editorial Team",
@@ -676,7 +676,7 @@ export const ARTICLES: Article[] = [
 
   {
     slug: "anniversary-messages-for-partner",
-    title: "40 Deep & Meaningful Anniversary Messages for Your Partner",
+    title: "4 Deep & Meaningful Anniversary Messages for Your Partner",
     description: "40 deep, emotional, and romantic anniversary messages for your husband, wife, boyfriend, or girlfriend. Perfect for cards, captions, and letters.",
     category: "anniversary",
     author: "AskOut Editorial Team",
@@ -725,7 +725,7 @@ export const ARTICLES: Article[] = [
 
   {
     slug: "proposal-ideas-for-couples",
-    title: "15 Personal Proposal Ideas for Couples (Creative & Intimate)",
+    title: "4 Personal Proposal Ideas for Couples (Creative & Intimate)",
     description: "Explore 15 creative, intimate, and romantic proposal ideas. From private outdoor setups to digital ask-out card reveals, pop the question in style.",
     category: "proposals",
     author: "AskOut Editorial Team",
@@ -774,7 +774,7 @@ export const ARTICLES: Article[] = [
 
   {
     slug: "long-distance-date-ideas",
-    title: "14 Fun & Intimate Long Distance Date Ideas for Couples",
+    title: "5 Fun & Intimate Long Distance Date Ideas for Couples",
     description: "Stay connected miles apart with 14 creative long-distance date night ideas. Virtual movie nights, online cooking dates, and digital surprise reveals.",
     category: "date-ideas",
     author: "AskOut Editorial Team",
@@ -824,7 +824,7 @@ export const ARTICLES: Article[] = [
 
   {
     slug: "cute-ways-to-surprise-your-partner",
-    title: "20 Small & Cute Ways to Surprise Your Partner Today (Just Because)",
+    title: "5 Small & Cute Ways to Surprise Your Partner Today (Just Because)",
     description: "Discover 20 simple, small, and cute ways to surprise your partner 'just because'. Spontaneous gestures that spark joy and deepen love daily.",
     category: "special-occasions",
     author: "AskOut Editorial Team",
@@ -874,7 +874,7 @@ export const ARTICLES: Article[] = [
 
   {
     slug: "how-to-make-someone-feel-special",
-    title: "How to Make Someone Feel Special: 18 Meaningful Gestures That Matter",
+    title: "How to Make Someone Feel Special: 5 Meaningful Gestures That Matter",
     description: "A thoughtful guide on how to make someone feel special, loved, and deeply valued. Actionable ideas for partners, friends, and loved ones.",
     category: "special-occasions",
     author: "AskOut Editorial Team",
